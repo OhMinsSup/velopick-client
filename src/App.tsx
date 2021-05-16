@@ -1,25 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Helmet } from "react-helmet-async";
+import { Route, Switch } from "react-router";
+
+import PickPage from "./pages/PickPage";
+
+import { AppLayout } from "./components/AppLayout";
+import { Sidebar } from "./components/Sidebar";
 
 function App() {
+  console.log(process.env);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Helmet>
+        <title>velopick</title>
+        <meta
+          name="description"
+          content="나의 기억을 Pick! 너의 기억을 Pick!"
+        />
+      </Helmet>
+      <Switch>
+        <Route path={["/", "/explore", "/member", "/search"]} exact>
+          <AppLayout>
+            <AppLayout.Side>
+              <Sidebar />
+            </AppLayout.Side>
+            <AppLayout.Main>
+              <Switch>
+                <Route path="/" exact>
+                  <PickPage />
+                </Route>
+                <Route path="/member">
+                  <div>member</div>
+                </Route>
+                <Route path="/explore">
+                  <div>explore</div>
+                </Route>
+                <Route path="/search">
+                  <div>search</div>
+                </Route>
+              </Switch>
+            </AppLayout.Main>
+            <AppLayout.RightSide>right side</AppLayout.RightSide>
+          </AppLayout>
+        </Route>
+      </Switch>
+    </>
   );
 }
 
