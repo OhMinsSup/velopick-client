@@ -6,6 +6,7 @@ import PickPage from "./pages/PickPage";
 
 import { AppLayout } from "./components/AppLayout";
 import { Sidebar } from "./components/Sidebar";
+import { PickMenu } from "./components/PickMenu";
 
 function App() {
   console.log(process.env);
@@ -40,7 +41,9 @@ function App() {
                 </Route>
               </Switch>
             </AppLayout.Main>
-            <AppLayout.RightSide>right side</AppLayout.RightSide>
+            <AppLayout.RightSide>
+              <PickMenu />
+            </AppLayout.RightSide>
           </AppLayout>
         </Route>
       </Switch>
