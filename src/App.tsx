@@ -1,4 +1,5 @@
 import React from "react";
+import { Global, css } from "@emotion/react";
 import { Helmet } from "react-helmet-async";
 import { Route, Switch } from "react-router";
 
@@ -7,6 +8,7 @@ import PickPage from "./pages/PickPage";
 import { AppLayout } from "./components/AppLayout";
 import { Sidebar } from "./components/Sidebar";
 import { PickMenu } from "./components/PickMenu";
+import palette from "./libs/style/palette";
 
 function App() {
   console.log(process.env);
@@ -47,8 +49,57 @@ function App() {
           </AppLayout>
         </Route>
       </Switch>
+      <Global styles={globalStyle} />
     </>
   );
 }
 
 export default App;
+
+const globalStyle = css`
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  html {
+    box-sizing: border-box;
+    * {
+      box-sizing: inherit;
+    }
+  }
+
+  .button-transparent:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(238, 238, 238, var(--tw-bg-opacity));
+  }
+
+  .button-transparent {
+    border-color: transparent;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    line-height: 1.625;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    --tw-text-opacity: 1;
+    color: rgba(55, 65, 81, var(--tw-text-opacity));
+  }
+
+  .input-text {
+    background-color: transparent;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    padding: 1rem;
+    width: 100%;
+    &:focus {
+      border: 2px solid ${palette.amber400};
+    }
+  }
+`;

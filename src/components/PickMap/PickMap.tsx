@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import { useGeolocationState } from "../../atoms/geolocationState";
 
@@ -33,37 +33,24 @@ const PickMap: React.FC<PickMapProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (divRef.current) {
+    if (
+      divRef.current &&
+      [currentGeolocation.longitude, currentGeolocation.latitude].every(Boolean)
+    ) {
+      const { longitude, latitude } = currentGeolocation;
       const mapOption = {
-        center: new kakao.maps.LatLng(37.32502994669613, 127.10825624869119), // 지도의 중심좌표
+        center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
         level: 3, // 지도의 확대 레벨
       };
 
       const map = new kakao.maps.Map(divRef.current, mapOption);
       console.log(map);
     }
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("current", currentGeolocation);
-  //   if (
-  //     divRef.current &&
-  //     [currentGeolocation.longitude, currentGeolocation.latitude].every(Boolean)
-  //   ) {
-  //     const { longitude, latitude } = currentGeolocation;
-  //     const mapOption = {
-  //       center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
-  //       level: 3, // 지도의 확대 레벨
-  //     };
-
-  //     const map = new kakao.maps.Map(divRef.current, mapOption);
-  //     console.log(map);
-  //   }
-  // }, [
-  //   currentGeolocation,
-  //   currentGeolocation.latitude,
-  //   currentGeolocation.longitude,
-  // ]);
+  }, [
+    currentGeolocation,
+    currentGeolocation.latitude,
+    currentGeolocation.longitude,
+  ]);
 
   return <div css={pickMapStyles} ref={divRef} />;
 };

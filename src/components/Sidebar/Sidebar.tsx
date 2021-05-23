@@ -4,7 +4,6 @@ import { BiMapPin, BiWorld, BiUser, BiSearch } from "react-icons/bi";
 import { Link, useLocation } from "react-router-dom";
 import { defaultThumbnail } from "../../assets/images";
 import palette from "../../libs/style/palette";
-import { LogoIcon } from "../../assets/svg";
 
 const navItemStyles = (active: boolean) => css`
   border-radius: 0.5rem;
