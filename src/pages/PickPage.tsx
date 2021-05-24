@@ -4,6 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { PickEditor, PickHeater } from "../components/PickEditor";
+import { PickModal } from "../components/PickModal";
 
 interface FormFieldValues {
   title: string;
@@ -38,12 +39,15 @@ const PickPage: React.FC<PickPageProps> = () => {
   });
 
   return (
-    <div className="w-full pt-5">
-      <FormProvider {...methods}>
-        <PickHeater />
-        <PickEditor />
-      </FormProvider>
-    </div>
+    <>
+      <div className="w-full pt-5">
+        <FormProvider {...methods}>
+          <PickHeater />
+          <PickEditor />
+        </FormProvider>
+      </div>
+      <PickModal />
+    </>
   );
 };
 

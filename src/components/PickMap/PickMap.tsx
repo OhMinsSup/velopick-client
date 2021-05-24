@@ -1,18 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import { useGeolocationState } from "../../atoms/geolocationState";
-
-const pickMapStyles = css`
-  border-radius: 25px;
-  height: 100%;
-  width: 100%;
-`;
+import { createMarkerFactory } from "../../libs/marker/markerFactory";
 
 interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
   const divRef = useRef<HTMLDivElement | null>(null);
-
+  const markerFactory = useRef<ReturnType<typeof createMarkerFactory> | null>(
+    null
+  );
   const handleGeoError: PositionErrorCallback = (positionError) => {
     console.log(positionError);
   };
@@ -44,7 +41,9 @@ const PickMap: React.FC<PickMapProps> = () => {
       };
 
       const map = new kakao.maps.Map(divRef.current, mapOption);
-      console.log(map);
+
+      markerFactory.current = createMarkerFactory();
+      markerFactory.current.setMap(map);
     }
   }, [
     currentGeolocation,
@@ -52,7 +51,25 @@ const PickMap: React.FC<PickMapProps> = () => {
     currentGeolocation.longitude,
   ]);
 
-  return <div css={pickMapStyles} ref={divRef} />;
+  return (
+    <>
+      <div css={pickMapStyles} ref={divRef} />
+      <div css={pickMapControllerStyles}>controller</div>
+    </>
+  );
 };
 
 export default PickMap;
+
+const pickMapStyles = css`
+  height: 100%;
+  width: 100%;
+`;
+
+const pickMapControllerStyles = css`
+  position: absolute;
+  top: 70px;
+  left: 50px;
+  z-index: 420;
+  width: 40px;
+`;
