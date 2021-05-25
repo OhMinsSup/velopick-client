@@ -5,12 +5,17 @@ import { BiX } from "react-icons/bi";
 import zIndexes from "../../libs/style/zIndexes";
 import palette from "../../libs/style/palette";
 
-interface ModalProps {
+interface ModalWrapperProps {
   side: React.ReactNode;
   visible: boolean;
   onClose: () => void;
 }
-const Modal: React.FC<ModalProps> = ({ side, visible, children, onClose }) => {
+const ModalWrapper: React.FC<ModalWrapperProps> = ({
+  side,
+  visible,
+  children,
+  onClose,
+}) => {
   const [closed, setClosed] = useState(true);
 
   useEffect(() => {
@@ -37,17 +42,17 @@ const Modal: React.FC<ModalProps> = ({ side, visible, children, onClose }) => {
           <div className="block-content">{children}</div>
         </div>
         <div className="left-block">
-          <div className="block-content">{side}</div>
           <div className="exit-wrapper">
             <BiX onClick={() => {}} />
           </div>
+          <div className="block-content">{side}</div>
         </div>
       </div>
     </ModalBlock>
   );
 };
 
-export default Modal;
+export default ModalWrapper;
 
 const ModalBlock = styled.div<{ visible: boolean }>`
   position: fixed;
@@ -78,7 +83,7 @@ const ModalBlock = styled.div<{ visible: boolean }>`
     .right-block {
       flex: 1;
       background: white;
-      padding: 1.5rem;
+      /* padding: 1.5rem; */
       display: flex;
       flex-direction: column;
       overflow-y: auto;

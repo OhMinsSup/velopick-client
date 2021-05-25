@@ -21,6 +21,7 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           className="input-text"
           autoComplete="off"
           placeholder="타이틀"
+          readOnly
           value=""
         />
       </div>
@@ -41,6 +42,7 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           className="input-text"
           id="slugField"
           placeholder="URL"
+          readOnly
           value=""
         />
       </div>
@@ -57,6 +59,7 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           name="description"
           className="input-text min-h-16"
           placeholder="너의 픽을 설명해주세요..."
+          readOnly
           css={textareaStyles}
         ></textarea>
       </div>
