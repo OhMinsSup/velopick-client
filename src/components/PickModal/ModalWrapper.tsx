@@ -112,6 +112,9 @@ const ModalBlock = styled.div<{ visible: boolean }>`
         color: ${palette.blueGray600};
         margin-bottom: 2.25rem;
         margin-bottom: 0;
+        &:hover {
+          color: ${palette.red400};
+        }
         svg {
           cursor: pointer;
         }

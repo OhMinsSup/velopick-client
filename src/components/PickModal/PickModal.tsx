@@ -11,9 +11,7 @@ const PickModal: React.FC<PickModalProps> = () => {
       onClose={() => {}}
       side={<PickMapSearchSidebar />}
     >
-      <div className="contents">
-        <PickMap />
-      </div>
+      <div className="contents">{/* <PickMap /> */}</div>
     </ModalWrapper>
   );
 };

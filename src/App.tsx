@@ -131,4 +131,16 @@ const globalStyle = css`
       transform: translateY(400px) scale(0.75);
     }
   }
+
+  @keyframes shining {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
 `;
