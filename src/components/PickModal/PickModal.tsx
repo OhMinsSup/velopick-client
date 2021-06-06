@@ -7,11 +7,13 @@ interface PickModalProps {}
 const PickModal: React.FC<PickModalProps> = () => {
   return (
     <ModalWrapper
-      visible={true}
+      visible={false}
       onClose={() => {}}
       side={<PickMapSearchSidebar />}
     >
-      <div className="contents">{/* <PickMap /> */}</div>
+      <div className="contents">
+        <PickMap />
+      </div>
     </ModalWrapper>
   );
 };

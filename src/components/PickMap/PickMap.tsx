@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import {
+  BiCog,
   BiCurrentLocation,
   BiPlus,
   BiMinus,
@@ -53,7 +54,12 @@ const PickMap: React.FC<PickMapProps> = () => {
 
       markerFactory.current = createMarkerFactory();
       markerFactory.current.setMap(map);
+      markerFactory.current.mount();
     }
+
+    return () => {
+      markerFactory.current?.unmount();
+    };
   }, [
     currentGeolocation,
     currentGeolocation.latitude,
@@ -84,6 +90,12 @@ const PickMap: React.FC<PickMapProps> = () => {
         <MapControllerButtonBlock type="button" className="shadow">
           <div className="controller-wrapper">
             <BiLocationPlus />
+          </div>
+        </MapControllerButtonBlock>
+
+        <MapControllerButtonBlock type="button" className="shadow mt-2">
+          <div className="controller-wrapper">
+            <BiCog />
           </div>
         </MapControllerButtonBlock>
       </div>

@@ -21,10 +21,9 @@ export function useKakaoKeywordSearchQuery(keyword?: string) {
         if (lastPage.meta.is_end) return undefined;
         const {
           meta: { pageable_count },
-          documents,
         } = lastPage;
 
-        const totalPage = pageable_count / documents.length;
+        const totalPage = pageable_count / PAGE_SIZE;
         const page = allPages.length;
         if (page < totalPage) return page + 1;
         return undefined;
