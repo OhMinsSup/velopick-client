@@ -103,6 +103,17 @@ const globalStyle = css`
     }
   }
 
+  @keyframes popIn {
+    0% {
+      opacity: 0.7;
+      transform: scale3d(0.8, 0.8, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+
   @keyframes popInFromBottom {
     0% {
       opacity: 0;
