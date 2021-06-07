@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import isEmpty from "lodash/isEmpty";
 import { useQueryClient } from "react-query";
 import { css } from "@emotion/react";
 
@@ -16,6 +17,8 @@ import {
 } from "../../api/kakao/kakao.hook";
 import { undrawEmpty } from "../../assets/images";
 import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
+import styled from "@emotion/styled";
+import { KakaoKeywordSearhModel } from "../../api/kakao/kakao.typedef";
 
 interface PickMapSearchSidebarProps {}
 const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
@@ -72,7 +75,7 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
       observer.unobserve(el);
     };
   }, [observer, items]);
-
+  console.log("items", items);
   return (
     <div className="block">
       <form className="py-5" onSubmit={onSubmit}>
@@ -85,17 +88,24 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
           onChange={onChange}
         />
       </form>
-      <div
+      <SearchResultBlock
         className="flex flex-col divide-y divide-gray-100"
-        css={searchResultStyles}
+        result={items}
       >
         {items ? (
           <React.Fragment>
             {items.map((item, index) => (
               <React.Fragment key={index}>
-                {item.documents.map((document, i) => (
-                  <PlaceCard key={document.id} document={document} />
-                ))}
+                {isEmpty(item.documents) ? (
+                  item.documents.map((document, i) => (
+                    <PlaceCard key={document.id} document={document} />
+                  ))
+                ) : (
+                  <div css={emptyStyles}>
+                    <img src={undrawEmpty} alt="empty data" />
+                    <div css={messageStyles}>검색 결과가 없습니다.</div>
+                  </div>
+                )}
               </React.Fragment>
             ))}
           </React.Fragment>
@@ -113,12 +123,23 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
               ref={i === 0 ? loadMoreRef : undefined}
             />
           ))}
-      </div>
+      </SearchResultBlock>
     </div>
   );
 };
 
 export default PickMapSearchSidebar;
+
+const SearchResultBlock = styled.div<{
+  result: KakaoKeywordSearhModel[] | null;
+}>`
+  ${(props) =>
+    props.result &&
+    css`
+      overflow-y: auto;
+      height: 768px;
+    `}
+`;
 
 const searchInputStyles = css`
   height: 50px;
@@ -136,11 +157,6 @@ const searchInputStyles = css`
   text-overflow: ellipsis;
   white-space: nowrap;
   outline: none;
-`;
-
-const searchResultStyles = css`
-  overflow-y: auto;
-  height: 768px;
 `;
 
 const messageStyles = css`
