@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useTransition, animated } from "react-spring";
 import styled from "@emotion/styled";
+
+import { useTagAction, useTagValue } from "../../atoms/tagState";
 
 import palette from "../../libs/style/palette";
 import { mediaQuery } from "../../libs/style/media";
@@ -10,7 +13,34 @@ const intervalCall1000 = intervalCall(1000);
 interface TagEditorProps {
   ref?: React.RefObject<HTMLDivElement>;
   tags: string[];
-  onChange: (tags: string[]) => void;
+}
+
+function Help({ focus }: { focus: boolean }) {
+  const transitions = useTransition(focus, {
+    from: { opacity: 0, transform: "translateY(-1rem)" },
+    enter: { opacity: 1, transform: "translateY(0rem)" },
+    leave: { opacity: 0, transform: "translateY(-1rem)" },
+    config: {
+      tension: 350,
+      friction: 22,
+    },
+  });
+
+  return (
+    <HelpBlock>
+      {transitions((props, item) =>
+        item ? (
+          <animated.div className="inside" style={props}>
+            쉼표 혹은 엔터를 입력하여 태그를 등록 할 수 있습니다.
+            <br />
+            그리고 최대 5개까지만 등록이 가능합니다.
+            <br />
+            등록된 태그를 클릭하면 삭제됩니다.
+          </animated.div>
+        ) : null
+      )}
+    </HelpBlock>
+  );
 }
 
 const TagItem: React.FC<{
@@ -19,24 +49,17 @@ const TagItem: React.FC<{
   return <Tag onClick={onClick}>{children}</Tag>;
 };
 
-const TagEditor: React.FC<TagEditorProps> = ({
-  tags: initialTags,
-  onChange,
-}) => {
-  const [tags, setTags] = useState<string[]>(initialTags);
+const TagEditor: React.FC<TagEditorProps> = ({ tags: initialTags }) => {
+  const tags = useTagValue();
+  const { removeTag, insertTag, changeTag } = useTagAction();
+
   const [value, setValue] = useState("");
   const [focus, setFocus] = useState(false);
 
-  const ignore = useRef(false);
   const editableDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (tags.length === 0) return;
-    onChange(tags);
-  }, [tags, onChange]);
-
-  useEffect(() => {
-    setTags(initialTags);
+    changeTag(initialTags);
   }, [initialTags]);
 
   useEffect(() => {
@@ -47,33 +70,6 @@ const TagEditor: React.FC<TagEditorProps> = ({
     }
   }, [value]);
 
-  const insertTag = useCallback(
-    (tag: string) => {
-      ignore.current = true;
-      setValue("");
-      if (tag === "" || tags.includes(tag)) return;
-      let processed = tag;
-      processed = tag.trim();
-      if (processed.indexOf(" #") > 0) {
-        const tempTags: string[] = [];
-        const regex = /#(\S+)/g;
-        let execArray: RegExpExecArray | null = null;
-        while ((execArray = regex.exec(processed))) {
-          if (execArray !== null) {
-            tempTags.push(execArray[1]);
-          }
-        }
-        setTags([...tags, ...tempTags]);
-        return;
-      }
-      if (processed.charAt(0) === "#") {
-        processed = processed.slice(1, processed.length);
-      }
-      setTags([...tags, processed]);
-    },
-    [tags]
-  );
-
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
@@ -81,25 +77,21 @@ const TagEditor: React.FC<TagEditorProps> = ({
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Backspace" && value === "") {
-        setTags(tags.slice(0, tags.length - 1));
+        changeTag(tags.slice(0, tags.length - 1));
         return;
       }
       const keys = [",", "Enter"];
-      if (keys.includes(e.key)) {
+      if (keys.includes(e.key) && tags.length < 5) {
         // 등록
         e.preventDefault();
-        intervalCall1000(() => {
-          insertTag(value);
-        });
+        const fn = () => setValue("");
+        intervalCall1000(() => insertTag(value, fn));
       }
     },
     [tags, value]
   );
 
-  const onRemove = (tag: string) => {
-    const nextTags = tags.filter((t) => t !== tag);
-    setTags(nextTags);
-  };
+  const onRemove = (tag: string) => removeTag(tag);
 
   return (
     <TagEditorBlock>
@@ -117,11 +109,28 @@ const TagEditor: React.FC<TagEditorProps> = ({
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       />
+      <Help focus={focus} />
     </TagEditorBlock>
   );
 };
 
 export default TagEditor;
+
+const HelpBlock = styled.div`
+  display: block;
+  width: 100%;
+  color: ${palette.blueGray700};
+  transition: ease-in 0.125s;
+  & > .inside {
+    position: absolute;
+    background: ${palette.blueGray800};
+    color: white;
+    padding: 0.75rem;
+    z-index: 20;
+    line-height: 1.5;
+    font-size: 0.75rem;
+  }
+`;
 
 const TagEditorBlock = styled.div`
   color: ${palette.blueGray800};

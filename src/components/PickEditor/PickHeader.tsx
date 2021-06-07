@@ -4,17 +4,18 @@ import { BiLocationPlus, BiPurchaseTag, BiUserPlus } from "react-icons/bi";
 import LabelButton from "./LabelButton";
 import TagEditor from "./TagEditor";
 
-interface PickHeaderProps {}
-const PickHeader: React.FC<PickHeaderProps> = () => {
+interface PickHeaderProps {
+  onShowPickModal: () => void;
+}
+const PickHeader: React.FC<PickHeaderProps> = ({ onShowPickModal }) => {
   const [visibleTagEditor, setVisibleTagEditor] = useState<boolean>(false);
-  const [visiblePlaceEditor, setVisiblePlaceEditor] = useState<boolean>(false);
   const [visibleUserEditor, setVisibleUserEditor] = useState<boolean>(false);
 
   const onClickLabel = useCallback(
     (e: React.MouseEvent<HTMLLabelElement, MouseEvent>, name: string) => {
       switch (name) {
         case "place":
-          setVisiblePlaceEditor((prev) => !prev);
+          onShowPickModal();
           break;
         case "tag":
           setVisibleTagEditor((prev) => !prev);
@@ -51,7 +52,7 @@ const PickHeader: React.FC<PickHeaderProps> = () => {
           onClickLabel={onClickLabel}
         />
       </div>
-      {visibleTagEditor && <TagEditor onChange={() => {}} tags={[]} />}
+      {visibleTagEditor && <TagEditor tags={[]} />}
     </div>
   );
 };

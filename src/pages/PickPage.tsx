@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import * as yup from "yup";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -32,21 +32,31 @@ const initialFormState: FormFieldValues = {
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
+  const [visiblePickModal, setVisiblePickModal] = useState<boolean>(false);
+
   const methods = useForm<FormFieldValues>({
     mode: "onChange",
     resolver: yupResolver(schema),
     defaultValues: initialFormState,
   });
 
+  const onShowPickModal = useCallback(() => {
+    setVisiblePickModal(true);
+  }, []);
+
+  const onClosePickModal = useCallback(() => {
+    setVisiblePickModal(false);
+  }, []);
+
   return (
     <>
       <div className="w-full pt-5">
         <FormProvider {...methods}>
-          <PickHeater />
+          <PickHeater onShowPickModal={onShowPickModal} />
           <PickEditor />
         </FormProvider>
       </div>
-      <PickModal />
+      <PickModal visible={visiblePickModal} onClose={onClosePickModal} />
     </>
   );
 };

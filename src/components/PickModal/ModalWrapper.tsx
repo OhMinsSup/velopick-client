@@ -43,7 +43,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
         </div>
         <div className="left-block">
           <div className="exit-wrapper">
-            <BiX onClick={() => {}} />
+            <BiX onClick={onClose} />
           </div>
           <div className="block-content">{side}</div>
         </div>
