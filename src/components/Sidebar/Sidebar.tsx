@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { css } from "@emotion/react";
 import { BiMapPin, BiWorld, BiUser, BiSearch } from "react-icons/bi";
 import { Link, useLocation } from "react-router-dom";
 import { defaultThumbnail } from "../../assets/images";
 import palette from "../../libs/style/palette";
+import UserMenu from "../common/UserMenu";
 
 const navItemStyles = (active: boolean) => css`
   border-radius: 0.5rem;
@@ -95,13 +96,17 @@ function SidebarHeader() {
   );
 }
 
-function SidebarFooter() {
+interface SidebarFooterProps {
+  onClickUserMenu: () => void;
+}
+function SidebarFooter({ onClickUserMenu }: SidebarFooterProps) {
   return (
     <div className="flex flex-row items-center flex-shrink-0 md:flex-col text-brand-grey-800 dark:text-brand-grey-300">
       <div className="relative w-auto">
         <button
           type="button"
           className="block w-10 h-10 overflow-hidden rounded-full md:w-12 md:h-12 md:my-4 profile-thumb"
+          onClick={onClickUserMenu}
         >
           <img
             className="block w-full profile-thumb"
@@ -116,11 +121,18 @@ function SidebarFooter() {
 
 interface SidebarProps {}
 const Sidebar: React.FC<SidebarProps> = () => {
+  const [visibleUserMenu, setVisibleUserMenu] = useState(false);
+
+  const onClickUserMenu = useCallback(() => {
+    setVisibleUserMenu((prev) => !prev);
+  }, []);
+
   return (
     <div className="md:h-screen">
       <header className="relative z-40 flex flex-row items-center justify-between w-full py-2 md:border-b-0 md:overflow-auto dark:border-brand-grey-800 md:h-full md:flex-col md:py-5">
         <SidebarHeader />
-        <SidebarFooter />
+        <SidebarFooter onClickUserMenu={onClickUserMenu} />
+        {visibleUserMenu && <UserMenu />}
       </header>
     </div>
   );

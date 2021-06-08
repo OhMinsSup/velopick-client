@@ -4,10 +4,13 @@ import { Helmet } from "react-helmet-async";
 import { Route, Switch } from "react-router";
 
 import PickPage from "./pages/PickPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 import { AppLayout } from "./components/AppLayout";
 import { Sidebar } from "./components/Sidebar";
 import { PickMenu } from "./components/PickMenu";
+
 import palette from "./libs/style/palette";
 
 function App() {
@@ -48,6 +51,8 @@ function App() {
             </AppLayout.RightSide>
           </AppLayout>
         </Route>
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
       </Switch>
       <Global styles={globalStyle} />
     </>
