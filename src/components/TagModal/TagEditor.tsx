@@ -7,6 +7,7 @@ import { useTagAction, useTagValue } from "../../atoms/tagState";
 import palette from "../../libs/style/palette";
 import { mediaQuery } from "../../libs/style/media";
 import { intervalCall } from "../../libs/utils";
+import { css } from "@emotion/react";
 
 const intervalCall1000 = intervalCall(1000);
 
@@ -54,7 +55,6 @@ const TagEditor: React.FC<TagEditorProps> = ({ tags: initialTags }) => {
   const { removeTag, insertTag, changeTag } = useTagAction();
 
   const [value, setValue] = useState("");
-  const [focus, setFocus] = useState(false);
 
   const editableDiv = useRef<HTMLDivElement>(null);
 
@@ -94,27 +94,45 @@ const TagEditor: React.FC<TagEditorProps> = ({ tags: initialTags }) => {
   const onRemove = (tag: string) => removeTag(tag);
 
   return (
-    <TagEditorBlock>
-      {tags.map((tag) => (
-        <TagItem key={tag} onClick={() => onRemove(tag)}>
-          {tag}
-        </TagItem>
-      ))}
-      <StyledInput
+    <TagEditorBlock className="space-y-3">
+      <input
+        type="text"
+        className="w-full input-text small focus:outline-none text-black placeholder-gray-500"
         placeholder="태그를 입력하세요"
+        aria-label="Tag"
         tabIndex={2}
         value={value}
         onChange={onChangeInput}
         onKeyDown={onKeyDown}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
       />
-      <Help focus={focus} />
+      <div>
+        {tags.map((tag) => (
+          <TagItem key={tag} onClick={() => onRemove(tag)}>
+            {tag}
+          </TagItem>
+        ))}
+      </div>
+      <div className="w-full overflow-y-auto" css={resultStyles}>
+        {Array.from({ length: 30 }).map((value, index) => (
+          <div className="text-sm" key={index}>
+            <div className="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
+              <span className="bg-amber-400 h-2 w-2 m-2 rounded-full"></span>
+              <div className="flex-grow font-medium px-2">Tighten Co.</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </TagEditorBlock>
   );
 };
 
 export default TagEditor;
+
+const resultStyles = css`
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  height: 23rem;
+`;
 
 const HelpBlock = styled.div`
   display: block;
@@ -132,7 +150,7 @@ const HelpBlock = styled.div`
   }
 `;
 
-const TagEditorBlock = styled.div`
+export const TagEditorBlock = styled.div`
   color: ${palette.blueGray800};
   font-size: 1.125rem;
   display: flex;
@@ -142,21 +160,6 @@ const TagEditorBlock = styled.div`
     display: block; /* For Firefox */
     color: ${palette.blueGray500};
   }
-`;
-
-const StyledInput = styled.input`
-  display: inline-flex;
-  outline: none;
-  cursor: text;
-  font-size: 1.125rem;
-  line-height: 2rem;
-  ${mediaQuery(767)} {
-    line-height: 1.5rem;
-    font-size: 0.75rem;
-  }
-  margin-bottom: 0.75rem;
-  min-width: 8rem;
-  border: none;
 `;
 
 const Tag = styled.div`

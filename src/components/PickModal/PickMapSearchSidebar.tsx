@@ -5,8 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import isEmpty from "lodash/isEmpty";
 import { useQueryClient } from "react-query";
+import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
 import PlaceCard from "../common/PlaceCard";
@@ -17,7 +17,6 @@ import {
 } from "../../api/kakao/kakao.hook";
 import { undrawEmpty } from "../../assets/images";
 import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
-import styled from "@emotion/styled";
 import { KakaoKeywordSearhModel } from "../../api/kakao/kakao.typedef";
 
 interface PickMapSearchSidebarProps {}
@@ -42,12 +41,16 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
     if (eleInput?.value) setKeyword(eleInput.value);
   }, []);
 
-  const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.value && keyword) {
-      queryClient.setQueryData(createKey(keyword), null);
-      setKeyword("");
-    }
-  }, []);
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log(e.target.value, keyword);
+      if (!e.target.value && keyword) {
+        queryClient.setQueryData(createKey(keyword), null);
+        setKeyword("");
+      }
+    },
+    [keyword]
+  );
 
   const items = useMemo(() => {
     if (!data) return null;
@@ -96,16 +99,9 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
           <React.Fragment>
             {items.map((item, index) => (
               <React.Fragment key={index}>
-                {isEmpty(item.documents) ? (
-                  item.documents.map((document, i) => (
-                    <PlaceCard key={document.id} document={document} />
-                  ))
-                ) : (
-                  <div css={emptyStyles}>
-                    <img src={undrawEmpty} alt="empty data" />
-                    <div css={messageStyles}>검색 결과가 없습니다.</div>
-                  </div>
-                )}
+                {item.documents.map((document, i) => (
+                  <PlaceCard key={document.id} document={document} />
+                ))}
               </React.Fragment>
             ))}
           </React.Fragment>

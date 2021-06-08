@@ -103,6 +103,15 @@ const globalStyle = css`
     }
   }
 
+  .input-text.small {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   @keyframes popIn {
     0% {
       opacity: 0.7;

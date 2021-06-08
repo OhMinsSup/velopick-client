@@ -1,16 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { BiLocationPlus, BiPurchaseTag, BiUserPlus } from "react-icons/bi";
 
 import LabelButton from "./LabelButton";
-import TagEditor from "./TagEditor";
 
 interface PickHeaderProps {
   onShowPickModal: () => void;
+  onShowTagModal: () => void;
+  onShowUserModal: () => void;
 }
-const PickHeader: React.FC<PickHeaderProps> = ({ onShowPickModal }) => {
-  const [visibleTagEditor, setVisibleTagEditor] = useState<boolean>(false);
-  const [visibleUserEditor, setVisibleUserEditor] = useState<boolean>(false);
-
+const PickHeader: React.FC<PickHeaderProps> = ({
+  onShowPickModal,
+  onShowTagModal,
+  onShowUserModal,
+}) => {
   const onClickLabel = useCallback(
     (e: React.MouseEvent<HTMLLabelElement, MouseEvent>, name: string) => {
       switch (name) {
@@ -18,10 +20,10 @@ const PickHeader: React.FC<PickHeaderProps> = ({ onShowPickModal }) => {
           onShowPickModal();
           break;
         case "tag":
-          setVisibleTagEditor((prev) => !prev);
+          onShowTagModal();
           break;
         case "user":
-          setVisibleUserEditor((prev) => !prev);
+          onShowUserModal();
           break;
         default:
           break;
@@ -52,7 +54,6 @@ const PickHeader: React.FC<PickHeaderProps> = ({ onShowPickModal }) => {
           onClickLabel={onClickLabel}
         />
       </div>
-      {visibleTagEditor && <TagEditor tags={[]} />}
     </div>
   );
 };
