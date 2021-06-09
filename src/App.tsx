@@ -1,17 +1,18 @@
 import React from "react";
+import loadable from "@loadable/component";
 import { Global, css } from "@emotion/react";
 import { Helmet } from "react-helmet-async";
 import { Route, Switch } from "react-router";
-
-import PickPage from "./pages/PickPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
 
 import { AppLayout } from "./components/AppLayout";
 import { Sidebar } from "./components/Sidebar";
 import { PickMenu } from "./components/PickMenu";
 
 import palette from "./libs/style/palette";
+
+const PickPage = loadable(() => import("./pages/PickPage"));
+const LoginPage = loadable(() => import("./pages/LoginPage"));
+const RegisterPage = loadable(() => import("./pages/RegisterPage"));
 
 function App() {
   console.log(process.env);

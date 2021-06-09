@@ -1,36 +1,36 @@
 import React, { useCallback, useState } from "react";
-import * as yup from "yup";
-import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+// import * as yup from "yup";
+// import { useForm } from "react-hook-form";
+// import { yupResolver } from "@hookform/resolvers/yup";
 
 import { PickEditor, PickHeater } from "../components/PickEditor";
 import { PickModal } from "../components/PickModal";
 import { TagModal } from "../components/TagModal";
 import { UserModal } from "../components/UserModal";
 
-interface FormFieldValues {
-  title: string;
-  isPrivate: boolean;
-  description?: string;
-  urlSlug?: string;
-}
+// interface FormFieldValues {
+//   title: string;
+//   isPrivate: boolean;
+//   description?: string;
+//   urlSlug?: string;
+// }
 
-const schema = yup.object().shape({
-  title: yup.string().required(),
-  description: yup.string().max(255).notRequired(),
-  urlSlug: yup
-    .string()
-    .matches(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)
-    .notRequired(),
-  isPrivate: yup.boolean(),
-});
+// const schema = yup.object().shape({
+//   title: yup.string().required(),
+//   description: yup.string().max(255).notRequired(),
+//   urlSlug: yup
+//     .string()
+//     .matches(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/)
+//     .notRequired(),
+//   isPrivate: yup.boolean(),
+// });
 
-const initialFormState: FormFieldValues = {
-  title: "",
-  description: "",
-  urlSlug: "",
-  isPrivate: true,
-};
+// const initialFormState: FormFieldValues = {
+//   title: "",
+//   description: "",
+//   urlSlug: "",
+//   isPrivate: true,
+// };
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
@@ -38,11 +38,11 @@ const PickPage: React.FC<PickPageProps> = () => {
   const [visibleTagModal, setVisibleTagModal] = useState<boolean>(false);
   const [visibleUserModal, setVisibleUserModal] = useState<boolean>(false);
 
-  const methods = useForm<FormFieldValues>({
-    mode: "onChange",
-    resolver: yupResolver(schema),
-    defaultValues: initialFormState,
-  });
+  // const methods = useForm<FormFieldValues>({
+  //   mode: "onSubmit",
+  //   resolver: yupResolver(schema),
+  //   defaultValues: initialFormState,
+  // });
 
   const onShowPickModal = useCallback(() => {
     setVisiblePickModal(true);
@@ -71,14 +71,12 @@ const PickPage: React.FC<PickPageProps> = () => {
   return (
     <>
       <div className="w-full pt-5">
-        <FormProvider {...methods}>
-          <PickHeater
-            onShowPickModal={onShowPickModal}
-            onShowTagModal={onShowTagModal}
-            onShowUserModal={onShowUserModal}
-          />
-          <PickEditor />
-        </FormProvider>
+        <PickHeater
+          onShowPickModal={onShowPickModal}
+          onShowTagModal={onShowTagModal}
+          onShowUserModal={onShowUserModal}
+        />
+        <PickEditor />
       </div>
       <PickModal visible={visiblePickModal} onClose={onClosePickModal} />
       <TagModal visible={visibleTagModal} onClose={onCloseTagModal} />

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { HelmetProvider } from "react-helmet-async";
+import { ToastProvider } from "react-toast-notifications";
 
 import "./styles/styles.css";
 import App from "./App";
@@ -17,7 +18,9 @@ ReactDOM.render(
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <App />
+            <ToastProvider>
+              <App />
+            </ToastProvider>
           </BrowserRouter>
         </QueryClientProvider>
       </RecoilRoot>
