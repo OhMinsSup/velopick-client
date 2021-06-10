@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ToastProvider } from "react-toast-notifications";
 
 import "./styles/styles.css";
+import "@mobiscroll/react-lite/dist/css/mobiscroll.min.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
