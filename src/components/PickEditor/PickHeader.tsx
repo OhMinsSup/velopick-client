@@ -50,7 +50,7 @@ const PickHeader: React.FC<PickHeaderProps> = ({
         <LabelButton
           name="user"
           icon={<BiUserPlus className="w-5 h-5 mr-1 fill-current" />}
-          text="친구 추가"
+          text="회원 추가"
           onClickLabel={onClickLabel}
         />
       </div>

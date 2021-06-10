@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTransition, animated } from "react-spring";
+// import { useTransition, animated } from "react-spring";
 import styled from "@emotion/styled";
 
 import { useTagAction, useTagValue } from "../../atoms/tagState";
@@ -16,35 +16,35 @@ interface TagEditorProps {
   tags: string[];
 }
 
-function Help({ focus }: { focus: boolean }) {
-  const transitions = useTransition(focus, {
-    from: { opacity: 0, transform: "translateY(-1rem)" },
-    enter: { opacity: 1, transform: "translateY(0rem)" },
-    leave: { opacity: 0, transform: "translateY(-1rem)" },
-    config: {
-      tension: 350,
-      friction: 22,
-    },
-  });
+// function Help({ focus }: { focus: boolean }) {
+//   const transitions = useTransition(focus, {
+//     from: { opacity: 0, transform: "translateY(-1rem)" },
+//     enter: { opacity: 1, transform: "translateY(0rem)" },
+//     leave: { opacity: 0, transform: "translateY(-1rem)" },
+//     config: {
+//       tension: 350,
+//       friction: 22,
+//     },
+//   });
 
-  return (
-    <HelpBlock>
-      {transitions((props, item) =>
-        item ? (
-          <animated.div className="inside" style={props}>
-            쉼표 혹은 엔터를 입력하여 태그를 등록 할 수 있습니다.
-            <br />
-            그리고 최대 5개까지만 등록이 가능합니다.
-            <br />
-            등록된 태그를 클릭하면 삭제됩니다.
-          </animated.div>
-        ) : null
-      )}
-    </HelpBlock>
-  );
-}
+//   return (
+//     <HelpBlock>
+//       {transitions((props, item) =>
+//         item ? (
+//           <animated.div className="inside" style={props}>
+//             쉼표 혹은 엔터를 입력하여 태그를 등록 할 수 있습니다.
+//             <br />
+//             그리고 최대 5개까지만 등록이 가능합니다.
+//             <br />
+//             등록된 태그를 클릭하면 삭제됩니다.
+//           </animated.div>
+//         ) : null
+//       )}
+//     </HelpBlock>
+//   );
+// }
 
-const TagItem: React.FC<{
+export const TagItem: React.FC<{
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }> = ({ onClick, children }) => {
   return <Tag onClick={onClick}>{children}</Tag>;
@@ -131,24 +131,23 @@ export default TagEditor;
 const resultStyles = css`
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  height: 23rem;
 `;
 
-const HelpBlock = styled.div`
-  display: block;
-  width: 100%;
-  color: ${palette.blueGray700};
-  transition: ease-in 0.125s;
-  & > .inside {
-    position: absolute;
-    background: ${palette.blueGray800};
-    color: white;
-    padding: 0.75rem;
-    z-index: 20;
-    line-height: 1.5;
-    font-size: 0.75rem;
-  }
-`;
+// const HelpBlock = styled.div`
+//   display: block;
+//   width: 100%;
+//   color: ${palette.blueGray700};
+//   transition: ease-in 0.125s;
+//   & > .inside {
+//     position: absolute;
+//     background: ${palette.blueGray800};
+//     color: white;
+//     padding: 0.75rem;
+//     z-index: 20;
+//     line-height: 1.5;
+//     font-size: 0.75rem;
+//   }
+// `;
 
 export const TagEditorBlock = styled.div`
   color: ${palette.blueGray800};
