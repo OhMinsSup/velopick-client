@@ -78,7 +78,7 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
       observer.unobserve(el);
     };
   }, [observer, items]);
-  console.log("items", items);
+
   return (
     <div className="block">
       <form className="py-5" onSubmit={onSubmit}>

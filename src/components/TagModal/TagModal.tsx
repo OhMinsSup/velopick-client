@@ -9,7 +9,7 @@ interface TagModalProps {
 const TagModal: React.FC<TagModalProps> = ({ visible, onClose }) => {
   return (
     <Modal visible={visible} onClose={onClose}>
-      <TagEditor tags={[]} />
+      <TagEditor />
     </Modal>
   );
 };

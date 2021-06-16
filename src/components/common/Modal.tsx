@@ -83,9 +83,8 @@ const ModalBlock = styled.div<{ visible: boolean }>`
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      ${media.small} {
-        overflow-y: auto;
-      }
+      overflow-y: auto;
+
       .exit-wrapper {
         display: flex;
         justify-content: flex-end;

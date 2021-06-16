@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { BiWorld, BiLock } from "react-icons/bi";
 import { css } from "@emotion/react";
+
 import IconButton from "../common/IconButton";
+import useInputs from "../../hooks/useInputs";
+import { useTagValue } from "../../atoms/tagState";
+import { useUserValue } from "../../atoms/userState";
 
 interface PickEditorProps {}
 const PickEditor: React.FC<PickEditorProps> = () => {
+  const tags = useTagValue();
+  const users = useUserValue();
+
+  const [published, setPublished] = useState(true);
+
+  const [form, onChange] = useInputs({
+    title: "",
+    slug: "",
+    description: "",
+  });
+
+  const onClickPrivate = useCallback(() => {
+    setPublished(false);
+  }, []);
+
+  const onClickPublic = useCallback(() => {
+    setPublished(true);
+  }, []);
+
   return (
     <div>
       <div className="mb-6">
@@ -18,11 +41,11 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           type="text"
           id="title"
           name="title"
+          value={form.title}
           className="input-text"
           autoComplete="off"
           placeholder="타이틀"
-          readOnly
-          value=""
+          onChange={onChange}
         />
       </div>
 
@@ -40,10 +63,11 @@ const PickEditor: React.FC<PickEditorProps> = () => {
         <input
           type="text"
           className="input-text"
-          id="slugField"
+          id="slug"
+          name="slug"
           placeholder="URL"
-          readOnly
-          value=""
+          value={form.slug}
+          onChange={onChange}
         />
       </div>
 
@@ -59,13 +83,27 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           name="description"
           className="input-text min-h-16"
           placeholder="너의 픽을 설명해주세요..."
-          readOnly
+          value={form.description}
           css={textareaStyles}
+          onChange={onChange}
         ></textarea>
       </div>
-      <div className="mb-12 flex">
-        <IconButton icon={<BiWorld />} description="전체 공개" />
-        <IconButton icon={<BiLock />} description="비공개" />
+      <div className="mb-12 flex space-x-2">
+        <IconButton
+          icon={<BiWorld />}
+          active={published}
+          description="전체 공개"
+          onClick={onClickPublic}
+        />
+        <IconButton
+          icon={<BiLock />}
+          active={!published}
+          description="비공개"
+          onClick={onClickPrivate}
+        />
+      </div>
+      <div className="mb-12 flex space-x-2">
+        <IconButton active={false} description="등록하기" onClick={() => {}} />
       </div>
     </div>
   );

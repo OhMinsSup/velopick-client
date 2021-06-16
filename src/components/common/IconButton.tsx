@@ -4,13 +4,20 @@ import { css } from "@emotion/react";
 import palette from "../../libs/style/palette";
 
 interface IconButtonProps {
-  icon: React.ReactNode;
   description: string;
+  active: boolean;
+  onClick: () => void;
+  icon?: React.ReactNode;
 }
 
-const IconButton: React.FC<IconButtonProps> = ({ icon, description }) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  description,
+  active,
+  onClick,
+}) => {
   return (
-    <Button active={false}>
+    <Button active={active} onClick={onClick}>
       {icon}
       <div className="description">{description}</div>
     </Button>
@@ -29,10 +36,12 @@ const Button = styled.button<{ active: boolean }>`
   font-weight: bold;
   background: white;
   font-size: 1.125rem;
+  outline: none;
   color: ${palette.blueGray600};
   border: 1px solid ${palette.blueGray300};
   padding: 0;
   padding-left: 1rem;
+  padding-right: 1rem;
   border-radius: 4px;
   cursor: pointer;
   &:hover {

@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from "uuid";
-import markerItem from "./markerItem";
 import { Subscribable } from "./subscribable";
 
 export class MarkerFactory extends Subscribable {
@@ -7,7 +6,9 @@ export class MarkerFactory extends Subscribable {
 
   private kakaoMap: kakao.maps.Map | null;
 
-  private markers: markerItem[];
+  private markerObject: Map<string, kakao.maps.Marker>;
+
+  private markerObjectIds: string[];
 
   private removeMarkerEventListener?: () => void;
 
@@ -20,23 +21,34 @@ export class MarkerFactory extends Subscribable {
 
     this.kakaoMap = null;
 
-    this.markers = [];
+    this.markerObjectIds = [];
+
+    this.markerObject = new Map();
   }
 
   setMap(map: kakao.maps.Map) {
     this.kakaoMap = map;
   }
 
-  mount(): void {
+  setMapClicks() {
     this.unsubscribeMarker = this.subscribe(() => {
-      console.log("mount");
+      console.log("event");
     });
   }
 
+  mount(): void {
+    // this.unsubscribeMarker = this.subscribe(() => {
+    //   console.log("mount");
+    // });
+  }
+
   unmount(): void {
-    if (this.unsubscribeMarker) {
-      this.unsubscribeMarker();
-    }
+    // if (this.unsubscribeMarker) {
+    //   this.unsubscribeMarker();
+    // }
+
+    this.markerObject.clear();
+    this.markerObjectIds = [];
   }
 
   handleClickMap = (event: any): void => {
@@ -44,11 +56,22 @@ export class MarkerFactory extends Subscribable {
     const marker = new kakao.maps.Marker({
       position: event.latLng,
     });
-    // 지도에 마커를 표시합니다
-    console.log(marker);
 
+    // 지도에 마커를 표시합니다
     marker.setMap(this.kakaoMap);
+
+    // 생성한 마커를 캐시형태로 저장한다.
+    const markerObjectId = uuidv4();
+    this.markerObject.set(markerObjectId, marker);
+    this.markerObjectIds.push(markerObjectId);
+
+    console.log("markerObject", this.markerObject);
+    console.log("markerObjectIds", this.markerObjectIds);
   };
+
+  protected onSubscribe(): void {
+    this.setEventListener();
+  }
 
   setMarkerEventListener(
     setup: (setEvent: (...args: any[]) => void) => () => void
@@ -60,21 +83,19 @@ export class MarkerFactory extends Subscribable {
     this.removeMarkerEventListener = setup(this.handleClickMap);
   }
 
-  protected onSubscribe(): void {
-    if (!this.removeMarkerEventListener) {
-      this.setDefaultEventListener();
-    }
-  }
+  private setEventListener() {
+    if (!this.kakaoMap) return;
 
-  private setDefaultEventListener() {
+    const kakaoMap = this.kakaoMap;
+
     this.setMarkerEventListener((onClick) => {
       const listener = (event: any) => onClick(event);
       // Listen to visibillitychange and focus
-      kakao.maps.event.addListener(this.kakaoMap!, "click", listener);
+      kakao.maps.event.addListener(kakaoMap, "click", listener);
 
       return () => {
         // Be sure to unsubscribe if a new handler is set
-        kakao.maps.event.removeListener(this.kakaoMap!, "click", listener);
+        kakao.maps.event.removeListener(kakaoMap, "click", listener);
       };
     });
   }

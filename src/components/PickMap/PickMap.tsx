@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import {
@@ -15,13 +15,27 @@ import palette from "../../libs/style/palette";
 
 interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
+  const [picker, setPicker] = useState(false);
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
+
   const divRef = useRef<HTMLDivElement | null>(null);
+
   const markerFactory = useRef<ReturnType<typeof createMarkerFactory> | null>(
     null
   );
+
+  const onClickPicker = useCallback(() => {
+    // if (markerFactory.current) {
+    //   const removeListener = markerFactory.current.eventListener;
+    //   console.log(removeListener);
+    //   if (removeListener) removeListener();
+    // }
+
+    setPicker((prev) => !prev);
+  }, []);
+
   const handleGeoError: PositionErrorCallback = (positionError) => {
-    console.log(positionError);
+    console.error(positionError);
   };
 
   const handleGeoSucces: PositionCallback = (position) => {
@@ -36,7 +50,6 @@ const PickMap: React.FC<PickMapProps> = () => {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -70,7 +83,11 @@ const PickMap: React.FC<PickMapProps> = () => {
     <>
       <div css={pickMapStyles} ref={divRef} />
       <div css={pickMapControllerStyles}>
-        <MapControllerButtonBlock type="button" className="shadow">
+        <MapControllerButtonBlock
+          type="button"
+          className="shadow"
+          active={false}
+        >
           <div className="controller-wrapper">
             <BiCurrentLocation />
           </div>
@@ -87,13 +104,22 @@ const PickMap: React.FC<PickMapProps> = () => {
           </div>
         </ZoomControllerBlock>
 
-        <MapControllerButtonBlock type="button" className="shadow">
+        <MapControllerButtonBlock
+          type="button"
+          className="shadow"
+          active={picker}
+          onClick={onClickPicker}
+        >
           <div className="controller-wrapper">
             <BiLocationPlus />
           </div>
         </MapControllerButtonBlock>
 
-        <MapControllerButtonBlock type="button" className="shadow mt-2">
+        <MapControllerButtonBlock
+          type="button"
+          className="shadow mt-2"
+          active={false}
+        >
           <div className="controller-wrapper">
             <BiCog />
           </div>
@@ -150,7 +176,7 @@ const ZoomButtonBlock = styled.button`
   }
 `;
 
-const MapControllerButtonBlock = styled.button`
+const MapControllerButtonBlock = styled.button<{ active: boolean }>`
   display: block;
   position: relative;
   width: 32px;
@@ -165,14 +191,28 @@ const MapControllerButtonBlock = styled.button`
     justify-content: center;
 
     & > svg {
-      color: ${palette.blueGray600};
+      ${(props) =>
+        props.active
+          ? css`
+              color: ${palette.amber400};
+            `
+          : css`
+              color: ${palette.blueGray600};
+            `}
     }
   }
 
   &:hover {
     .controller-wrapper {
       & > svg {
-        color: ${palette.blueGray400};
+        ${(props) =>
+          props.active
+            ? css`
+                color: ${palette.amber400};
+              `
+            : css`
+                color: ${palette.blueGray600};
+              `}
       }
     }
   }

@@ -15,7 +15,6 @@ const LoginPage = loadable(() => import("./pages/LoginPage"));
 const RegisterPage = loadable(() => import("./pages/RegisterPage"));
 
 function App() {
-  console.log(process.env);
   return (
     <>
       <Helmet>

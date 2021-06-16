@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { atom, useRecoilState, useRecoilValue } from "recoil";
 
 const tagsState = atom<string[]>({
@@ -12,8 +12,6 @@ export function useTagValue() {
 
 export function useTagAction() {
   const [tags, setTags] = useRecoilState(tagsState);
-
-  const ignore = useRef(false);
 
   const changeTag = useCallback(
     (tags: string[]) => {
@@ -31,10 +29,7 @@ export function useTagAction() {
   );
 
   const insertTag = useCallback(
-    (tag: string, fn?: () => void) => {
-      ignore.current = true;
-      if (typeof fn === "function" && fn) fn();
-
+    (tag: string) => {
       if (tag === "" || tags.includes(tag)) return;
 
       let processed = tag;
