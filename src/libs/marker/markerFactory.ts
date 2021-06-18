@@ -1,60 +1,84 @@
 import { v4 as uuidv4 } from "uuid";
-import { Subscribable } from "./subscribable";
+import { kakaoMapClickManager } from "./kakaoMapClickManager";
 
-export class MarkerFactory extends Subscribable {
+export class MarkerFactory {
   private id: string;
 
   private kakaoMap: kakao.maps.Map | null;
 
   private markerObject: Map<string, kakao.maps.Marker>;
 
-  private markerObjectIds: string[];
+  private markerObjects: kakao.maps.Marker[];
 
-  private removeMarkerEventListener?: () => void;
-
-  private unsubscribeMarker?: () => void;
+  private unsubscribeKakaoMapClick?: () => void;
 
   constructor() {
-    super();
-
     this.id = uuidv4();
 
     this.kakaoMap = null;
 
-    this.markerObjectIds = [];
+    this.markerObjects = [];
 
-    this.markerObject = new Map();
+    this.markerObject = new Map<string, kakao.maps.Marker>();
   }
 
   setMap(map: kakao.maps.Map) {
     this.kakaoMap = map;
   }
 
-  setMapClicks() {
-    this.unsubscribeMarker = this.subscribe(() => {
-      console.log("event");
+  mount(): void {
+    if (!this.kakaoMap) return;
+    // set manager kakao map objects
+    kakaoMapClickManager.setKakaoMap(this.kakaoMap);
+
+    this.unsubscribeKakaoMapClick = kakaoMapClickManager.subscribe((event) => {
+      this.handleClickMap(event);
     });
   }
 
-  mount(): void {
-    // this.unsubscribeMarker = this.subscribe(() => {
-    //   console.log("mount");
-    // });
-  }
-
   unmount(): void {
-    // if (this.unsubscribeMarker) {
-    //   this.unsubscribeMarker();
-    // }
+    this.unsubscribeKakaoMapClick?.();
+
+    // clear markers
+    if (this.markerObjects.length) {
+      this.markerObjects.forEach((marker) => {
+        kakao.maps.event.removeListener(
+          marker,
+          "click",
+          this.handleClickMarker
+        );
+        marker.setMap(null);
+      });
+    }
 
     this.markerObject.clear();
-    this.markerObjectIds = [];
+    this.markerObjects = [];
   }
 
-  handleClickMap = (event: any): void => {
-    // 지도를 클릭한 위치에 표출할 마커입니다
+  handleClickMarker = (event: any) => {
+    console.log("event", event);
+  };
+
+  handleClickMap = (event: any) => {
+    this.makeAddMarker(event.latLng);
+  };
+
+  makeAddMarker = (
+    data: kakao.maps.LatLng | null,
+    lat?: number,
+    lng?: number
+  ) => {
+    let latLng: kakao.maps.LatLng | null;
+    if (!data && lat && lng) {
+      latLng = new kakao.maps.LatLng(lat, lng);
+    } else {
+      latLng = data || null;
+    }
+
+    if (!latLng) return;
+
     const marker = new kakao.maps.Marker({
-      position: event.latLng,
+      position: latLng,
     });
 
     // 지도에 마커를 표시합니다
@@ -62,43 +86,15 @@ export class MarkerFactory extends Subscribable {
 
     // 생성한 마커를 캐시형태로 저장한다.
     const markerObjectId = uuidv4();
+
     this.markerObject.set(markerObjectId, marker);
-    this.markerObjectIds.push(markerObjectId);
+    this.markerObjects.push(marker);
 
     console.log("markerObject", this.markerObject);
-    console.log("markerObjectIds", this.markerObjectIds);
+    console.log("markerObjects", this.markerObjects);
+
+    kakao.maps.event.addListener(marker, "click", this.handleClickMarker);
   };
-
-  protected onSubscribe(): void {
-    this.setEventListener();
-  }
-
-  setMarkerEventListener(
-    setup: (setEvent: (...args: any[]) => void) => () => void
-  ): void {
-    if (this.removeMarkerEventListener) {
-      this.removeMarkerEventListener();
-    }
-
-    this.removeMarkerEventListener = setup(this.handleClickMap);
-  }
-
-  private setEventListener() {
-    if (!this.kakaoMap) return;
-
-    const kakaoMap = this.kakaoMap;
-
-    this.setMarkerEventListener((onClick) => {
-      const listener = (event: any) => onClick(event);
-      // Listen to visibillitychange and focus
-      kakao.maps.event.addListener(kakaoMap, "click", listener);
-
-      return () => {
-        // Be sure to unsubscribe if a new handler is set
-        kakao.maps.event.removeListener(kakaoMap, "click", listener);
-      };
-    });
-  }
 }
 
 let markerFactory: MarkerFactory | null = null;

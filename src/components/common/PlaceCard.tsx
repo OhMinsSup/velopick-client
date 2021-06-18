@@ -4,12 +4,20 @@ import { Document } from "../../api/kakao/kakao.typedef";
 
 interface PlaceCardProps {
   document: Document;
+  onClickPlaceLocation: (document: Document) => void;
 }
-const PlaceCard: React.FC<PlaceCardProps> = ({ document }) => {
+const PlaceCard: React.FC<PlaceCardProps> = ({
+  document,
+  onClickPlaceLocation,
+}) => {
   const onClickKakaoPlaceMove = useCallback(() => {
     const win = window.open(document.place_url, "_blank");
     if (!win) return;
     win.focus();
+  }, []);
+
+  const onClickMapIcon = useCallback(() => {
+    onClickPlaceLocation(document);
   }, []);
 
   return (
@@ -32,7 +40,10 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ document }) => {
               {document.category_group_name}
             </dd>
           </div>
-          <div className="absolute top-0 right-0 rounded-full py-0.5 hidden sm:flex xl:flex items-center space-x-1">
+          <div
+            className="absolute top-0 right-0 rounded-full py-0.5 hidden sm:flex xl:flex items-center space-x-1"
+            onClick={onClickMapIcon}
+          >
             <BiMap className="mx-5 w-5 h-5 rounded-full cursor-pointer" />
           </div>
         </dl>

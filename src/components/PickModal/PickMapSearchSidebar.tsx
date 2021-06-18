@@ -17,7 +17,11 @@ import {
 } from "../../api/kakao/kakao.hook";
 import { undrawEmpty } from "../../assets/images";
 import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
-import { KakaoKeywordSearhModel } from "../../api/kakao/kakao.typedef";
+import {
+  Document,
+  KakaoKeywordSearhModel,
+} from "../../api/kakao/kakao.typedef";
+import useMarkerObject from "../../hooks/useMarkerObject";
 
 interface PickMapSearchSidebarProps {}
 const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
@@ -28,6 +32,15 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const { data, fetchNextPage, hasNextPage } = useKakaoKeywordSearchQuery(
     keyword
   );
+
+  const { getFactory } = useMarkerObject();
+
+  const onClickPlaceLocation = useCallback((document: Document) => {
+    console.log(document);
+    const markerFactory = getFactory();
+    console.log("markerFactory", markerFactory);
+    markerFactory?.makeAddMarker(null, Number(document.x), Number(document.y));
+  }, []);
 
   const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +56,6 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(e.target.value, keyword);
       if (!e.target.value && keyword) {
         queryClient.setQueryData(createKey(keyword), null);
         setKeyword("");
@@ -100,7 +112,11 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
             {items.map((item, index) => (
               <React.Fragment key={index}>
                 {item.documents.map((document, i) => (
-                  <PlaceCard key={document.id} document={document} />
+                  <PlaceCard
+                    key={document.id}
+                    document={document}
+                    onClickPlaceLocation={onClickPlaceLocation}
+                  />
                 ))}
               </React.Fragment>
             ))}

@@ -12,6 +12,7 @@ import {
 import { useGeolocationState } from "../../atoms/geolocationState";
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
 import palette from "../../libs/style/palette";
+import useMarkerObject from "../../hooks/useMarkerObject";
 
 interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
@@ -20,17 +21,9 @@ const PickMap: React.FC<PickMapProps> = () => {
 
   const divRef = useRef<HTMLDivElement | null>(null);
 
-  const markerFactory = useRef<ReturnType<typeof createMarkerFactory> | null>(
-    null
-  );
+  const { setFactory, getFactory } = useMarkerObject();
 
   const onClickPicker = useCallback(() => {
-    // if (markerFactory.current) {
-    //   const removeListener = markerFactory.current.eventListener;
-    //   console.log(removeListener);
-    //   if (removeListener) removeListener();
-    // }
-
     setPicker((prev) => !prev);
   }, []);
 
@@ -64,14 +57,14 @@ const PickMap: React.FC<PickMapProps> = () => {
       };
 
       const map = new kakao.maps.Map(divRef.current, mapOption);
-
-      markerFactory.current = createMarkerFactory();
-      markerFactory.current.setMap(map);
-      markerFactory.current.mount();
+      setFactory(createMarkerFactory(), map);
+      const markerFactory = getFactory();
+      markerFactory?.mount();
     }
 
     return () => {
-      markerFactory.current?.unmount();
+      const markerFactory = getFactory();
+      markerFactory?.unmount();
     };
   }, [
     currentGeolocation,

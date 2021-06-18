@@ -1,4 +1,4 @@
-type Listener = () => void;
+type Listener = (...args: any[]) => void;
 
 export class Subscribable<TListener extends Function = Listener> {
   protected listeners: TListener[];
