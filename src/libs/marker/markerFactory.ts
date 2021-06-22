@@ -50,10 +50,8 @@ export class MarkerFactory {
     // clear markers
     if (this.markerObjects.length) {
       this.markerObjects.forEach((marker) => {
-        kakao.maps.event.removeListener(
-          marker,
-          "click",
-          this.handleClickMarker
+        kakao.maps.event.removeListener(marker, "click", () =>
+          this.handleClickMarker(marker)
         );
         marker.setMap(null);
       });
