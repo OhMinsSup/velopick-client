@@ -21,7 +21,8 @@ import {
   Document,
   KakaoKeywordSearhModel,
 } from "../../api/kakao/kakao.typedef";
-import useMarkerObject from "../../hooks/useMarkerObject";
+import { createMarkerFactory } from "../../libs/marker/markerFactory";
+import { useGeolocationState } from "../../atoms/geolocationState";
 
 interface PickMapSearchSidebarProps {}
 const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
@@ -29,17 +30,20 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [keyword, setKeyword] = useState<string>("");
 
+  const [, setCurrentGeolocation] = useGeolocationState();
   const { data, fetchNextPage, hasNextPage } = useKakaoKeywordSearchQuery(
     keyword
   );
 
-  const { getFactory } = useMarkerObject();
-
   const onClickPlaceLocation = useCallback((document: Document) => {
-    console.log(document);
-    const markerFactory = getFactory();
-    console.log("markerFactory", markerFactory);
-    markerFactory?.makeAddMarker(null, Number(document.x), Number(document.y));
+    const factory = createMarkerFactory();
+    const latLng = factory.generateLatLng(document.y, document.x);
+    factory.makeAddMarker(latLng);
+
+    setCurrentGeolocation({
+      latitude: latLng.getLat(),
+      longitude: latLng.getLng(),
+    });
   }, []);
 
   const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {

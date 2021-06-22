@@ -22,6 +22,14 @@ export class MarkerFactory {
     this.markerObject = new Map<string, kakao.maps.Marker>();
   }
 
+  get kakaoMapObj() {
+    return this.kakaoMap;
+  }
+
+  generateLatLng = (lat: number | string, lng: number | string) => {
+    return new kakao.maps.LatLng(Number(lat), Number(lng));
+  };
+
   setMap(map: kakao.maps.Map) {
     this.kakaoMap = map;
   }
@@ -51,38 +59,26 @@ export class MarkerFactory {
       });
     }
 
+    this.kakaoMap = null;
     this.markerObject.clear();
     this.markerObjects = [];
   }
 
-  handleClickMarker = (event: any) => {
-    console.log("event", event);
+  handleClickMarker = (selectMarker: kakao.maps.Marker) => {
+    console.log("selectMarker", selectMarker.getPosition());
   };
 
   handleClickMap = (event: any) => {
     this.makeAddMarker(event.latLng);
   };
 
-  makeAddMarker = (
-    data: kakao.maps.LatLng | null,
-    lat?: number,
-    lng?: number
-  ) => {
-    let latLng: kakao.maps.LatLng | null;
-    if (!data && lat && lng) {
-      latLng = new kakao.maps.LatLng(lat, lng);
-    } else {
-      latLng = data || null;
-    }
-
+  makeAddMarker = (latLng: kakao.maps.LatLng | null) => {
     if (!latLng) return;
 
     const marker = new kakao.maps.Marker({
+      map: this.kakaoMap ?? undefined,
       position: latLng,
     });
-
-    // 지도에 마커를 표시합니다
-    marker.setMap(this.kakaoMap);
 
     // 생성한 마커를 캐시형태로 저장한다.
     const markerObjectId = uuidv4();
@@ -90,10 +86,9 @@ export class MarkerFactory {
     this.markerObject.set(markerObjectId, marker);
     this.markerObjects.push(marker);
 
-    console.log("markerObject", this.markerObject);
-    console.log("markerObjects", this.markerObjects);
-
-    kakao.maps.event.addListener(marker, "click", this.handleClickMarker);
+    kakao.maps.event.addListener(marker, "click", () =>
+      this.handleClickMarker(marker)
+    );
   };
 }
 

@@ -12,7 +12,6 @@ import {
 import { useGeolocationState } from "../../atoms/geolocationState";
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
 import palette from "../../libs/style/palette";
-import useMarkerObject from "../../hooks/useMarkerObject";
 
 interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
@@ -20,8 +19,6 @@ const PickMap: React.FC<PickMapProps> = () => {
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
 
   const divRef = useRef<HTMLDivElement | null>(null);
-
-  const { setFactory, getFactory } = useMarkerObject();
 
   const onClickPicker = useCallback(() => {
     setPicker((prev) => !prev);
@@ -35,6 +32,7 @@ const PickMap: React.FC<PickMapProps> = () => {
     const {
       coords: { latitude, longitude },
     } = position;
+
     setCurrentGeolocation({
       latitude,
       longitude,
@@ -51,21 +49,24 @@ const PickMap: React.FC<PickMapProps> = () => {
       [currentGeolocation.longitude, currentGeolocation.latitude].every(Boolean)
     ) {
       const { longitude, latitude } = currentGeolocation;
-      const mapOption = {
-        center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
-        level: 3, // 지도의 확대 레벨
-      };
+      const factory = createMarkerFactory();
 
-      const map = new kakao.maps.Map(divRef.current, mapOption);
-      setFactory(createMarkerFactory(), map);
-      const markerFactory = getFactory();
-      markerFactory?.mount();
+      if (!factory.kakaoMapObj) {
+        const mapOption = {
+          center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
+          level: 3, // 지도의 확대 레벨
+        };
+
+        const map = new kakao.maps.Map(divRef.current, mapOption);
+        factory.setMap(map);
+      } else {
+        factory.kakaoMapObj.setCenter(
+          new kakao.maps.LatLng(latitude, longitude)
+        );
+      }
+
+      factory.mount();
     }
-
-    return () => {
-      const markerFactory = getFactory();
-      markerFactory?.unmount();
-    };
   }, [
     currentGeolocation,
     currentGeolocation.latitude,

@@ -4,6 +4,7 @@ import { PickEditor, PickHeater } from "../components/PickEditor";
 import { PickModal } from "../components/PickModal";
 import { TagModal } from "../components/TagModal";
 import { UserModal } from "../components/UserModal";
+import { createMarkerFactory } from "../libs/marker/markerFactory";
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
@@ -17,6 +18,9 @@ const PickPage: React.FC<PickPageProps> = () => {
 
   const onClosePickModal = useCallback(() => {
     setVisiblePickModal(false);
+
+    const factory = createMarkerFactory();
+    factory.unmount();
   }, []);
 
   const onShowTagModal = useCallback(() => {
