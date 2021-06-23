@@ -24,7 +24,7 @@ import {
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
 import { useGeolocationState } from "../../atoms/geolocationState";
 
-interface PickMapSearchSidebarProps {}
+interface PickMapSearchSidebarProps { }
 const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const queryClient = useQueryClient();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);

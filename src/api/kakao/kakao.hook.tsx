@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "react-query";
 import { getkakaoKeywordSearchAPI } from "./kakao.api";
 
+export const PAGE_NO = 1;
 export const PAGE_SIZE = 15;
 export const QUERY_KEY = "getkakaoKeywordSearchAPI";
 
@@ -9,7 +10,7 @@ export const createKey = (keyword?: string) => [QUERY_KEY, keyword];
 export function useKakaoKeywordSearchQuery(keyword?: string) {
   return useInfiniteQuery(
     createKey(keyword),
-    ({ pageParam = 1 }) =>
+    ({ pageParam = PAGE_NO }) =>
       getkakaoKeywordSearchAPI({
         page: pageParam,
         query: keyword,
@@ -25,7 +26,7 @@ export function useKakaoKeywordSearchQuery(keyword?: string) {
 
         const totalPage = pageable_count / PAGE_SIZE;
         const page = allPages.length;
-        if (page < totalPage) return page + 1;
+        if (page < totalPage) return page + PAGE_NO;
         return undefined;
       },
     }

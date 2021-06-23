@@ -7,7 +7,7 @@ import useInputs from "../../hooks/useInputs";
 import { useTagValue } from "../../atoms/tagState";
 import { useUserValue } from "../../atoms/userState";
 
-interface PickEditorProps {}
+interface PickEditorProps { }
 const PickEditor: React.FC<PickEditorProps> = () => {
   const tags = useTagValue();
   const users = useUserValue();
@@ -103,7 +103,7 @@ const PickEditor: React.FC<PickEditorProps> = () => {
         />
       </div>
       <div className="mb-12 flex space-x-2">
-        <IconButton active={false} description="등록하기" onClick={() => {}} />
+        <IconButton active={false} description="등록하기" onClick={() => { }} />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export class MarkerFactory {
 
   private kakaoMap: kakao.maps.Map | null;
 
-  private markerObject: Map<string, kakao.maps.Marker>;
+  private markerObject: Map<number, kakao.maps.Marker>;
 
   private markerObjects: kakao.maps.Marker[];
 
@@ -19,7 +19,7 @@ export class MarkerFactory {
 
     this.markerObjects = [];
 
-    this.markerObject = new Map<string, kakao.maps.Marker>();
+    this.markerObject = new Map<number, kakao.maps.Marker>();
   }
 
   get kakaoMapObj() {
@@ -50,9 +50,9 @@ export class MarkerFactory {
     // clear markers
     if (this.markerObjects.length) {
       this.markerObjects.forEach((marker) => {
-        kakao.maps.event.removeListener(marker, "click", () =>
+        kakao.maps.event.removeListener(marker, "click", () => {
           this.handleClickMarker(marker)
-        );
+        });
         marker.setMap(null);
       });
     }
@@ -63,7 +63,16 @@ export class MarkerFactory {
   }
 
   handleClickMarker = (selectMarker: kakao.maps.Marker) => {
-    console.log("selectMarker", selectMarker.getPosition());
+    for (const obj of this.markerObject.entries()) {
+      const [key, item] = obj
+      if (item === selectMarker) {
+        kakao.maps.event.removeListener(selectMarker, "click", () => {
+          this.handleClickMarker(selectMarker)
+        });
+        selectMarker.setMap(null);
+        this.markerObject.delete(key)
+      }
+    }
   };
 
   handleClickMap = (event: any) => {
@@ -78,10 +87,10 @@ export class MarkerFactory {
       position: latLng,
     });
 
-    // 생성한 마커를 캐시형태로 저장한다.
-    const markerObjectId = uuidv4();
+    const lastId = this.markerObject.size + 1
 
-    this.markerObject.set(markerObjectId, marker);
+    // 생성한 마커를 캐시형태로 저장한다.
+    this.markerObject.set(lastId, marker);
     this.markerObjects.push(marker);
 
     kakao.maps.event.addListener(marker, "click", () =>

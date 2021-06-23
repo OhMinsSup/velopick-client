@@ -1,28 +1,25 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import {
-  BiCog,
   BiCurrentLocation,
   BiPlus,
   BiMinus,
-  BiLocationPlus,
 } from "react-icons/bi";
 
 import { useGeolocationState } from "../../atoms/geolocationState";
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
 import palette from "../../libs/style/palette";
 
-interface PickMapProps {}
+interface PickMapProps { }
 const PickMap: React.FC<PickMapProps> = () => {
-  const [picker, setPicker] = useState(false);
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
 
   const divRef = useRef<HTMLDivElement | null>(null);
 
-  const onClickPicker = useCallback(() => {
-    setPicker((prev) => !prev);
-  }, []);
+  const gelocation = () => {
+    navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
+  }
 
   const handleGeoError: PositionErrorCallback = (positionError) => {
     console.error(positionError);
@@ -39,9 +36,27 @@ const PickMap: React.FC<PickMapProps> = () => {
     });
   };
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
-  }, []);
+  const onClickPlusZoom = useCallback(() => {
+    const factory = createMarkerFactory();
+    if (!factory.kakaoMapObj) return;
+
+    const level = factory.kakaoMapObj.getLevel();
+    factory.kakaoMapObj.setLevel(level + 1)
+  }, [])
+
+  const onClickMinusZoom = useCallback(() => {
+    const factory = createMarkerFactory();
+    if (!factory.kakaoMapObj) return;
+
+    const level = factory.kakaoMapObj.getLevel();
+    factory.kakaoMapObj.setLevel(level - 1)
+  }, [])
+
+  const onClickCurrentLocation = useCallback(() => {
+    gelocation()
+  }, [])
+
+  useEffect(() => { gelocation() }, []);
 
   useEffect(() => {
     if (
@@ -80,7 +95,7 @@ const PickMap: React.FC<PickMapProps> = () => {
         <MapControllerButtonBlock
           type="button"
           className="shadow"
-          active={false}
+          onClick={onClickCurrentLocation}
         >
           <div className="controller-wrapper">
             <BiCurrentLocation />
@@ -89,35 +104,14 @@ const PickMap: React.FC<PickMapProps> = () => {
 
         <ZoomControllerBlock className="shadow">
           <div className="controller-wrapper">
-            <ZoomButtonBlock type="button">
+            <ZoomButtonBlock type="button" onClick={onClickMinusZoom}>
               <BiPlus />
             </ZoomButtonBlock>
-            <ZoomButtonBlock type="button">
+            <ZoomButtonBlock type="button" onClick={onClickPlusZoom}>
               <BiMinus />
             </ZoomButtonBlock>
           </div>
         </ZoomControllerBlock>
-
-        <MapControllerButtonBlock
-          type="button"
-          className="shadow"
-          active={picker}
-          onClick={onClickPicker}
-        >
-          <div className="controller-wrapper">
-            <BiLocationPlus />
-          </div>
-        </MapControllerButtonBlock>
-
-        <MapControllerButtonBlock
-          type="button"
-          className="shadow mt-2"
-          active={false}
-        >
-          <div className="controller-wrapper">
-            <BiCog />
-          </div>
-        </MapControllerButtonBlock>
       </div>
     </>
   );
@@ -170,7 +164,7 @@ const ZoomButtonBlock = styled.button`
   }
 `;
 
-const MapControllerButtonBlock = styled.button<{ active: boolean }>`
+const MapControllerButtonBlock = styled.button<{ active?: boolean }>`
   display: block;
   position: relative;
   width: 32px;
@@ -185,28 +179,14 @@ const MapControllerButtonBlock = styled.button<{ active: boolean }>`
     justify-content: center;
 
     & > svg {
-      ${(props) =>
-        props.active
-          ? css`
-              color: ${palette.amber400};
-            `
-          : css`
-              color: ${palette.blueGray600};
-            `}
+      color: ${palette.blueGray600};
     }
   }
 
   &:hover {
     .controller-wrapper {
       & > svg {
-        ${(props) =>
-          props.active
-            ? css`
-                color: ${palette.amber400};
-              `
-            : css`
-                color: ${palette.blueGray600};
-              `}
+        color: ${palette.amber400};
       }
     }
   }

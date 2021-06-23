@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
 import { BiX } from "react-icons/bi";
 import zIndexes from "../../libs/style/zIndexes";
 import palette from "../../libs/style/palette";
+import media from "../../libs/style/media";
 
 interface ModalWrapperProps {
   side: React.ReactNode;
@@ -39,12 +40,15 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
     <ModalBlock visible={visible}>
       <div className="wrapper">
         <div className="right-block">
+          <ExitBlock className="flex lg:hidden absolute z-50 right-8 top-8">
+            <BiX onClick={onClose} />
+          </ExitBlock>
           <div className="block-content">{children}</div>
         </div>
         <div className="left-block">
-          <div className="exit-wrapper">
+          <ExitBlock className="flex">
             <BiX onClick={onClose} />
-          </div>
+          </ExitBlock>
           <div className="block-content">{side}</div>
         </div>
       </div>
@@ -72,11 +76,11 @@ const ModalBlock = styled.div<{ visible: boolean }>`
     display: flex;
 
     ${(props) =>
-      props.visible
-        ? css`
+    props.visible
+      ? css`
             animation: popInFromBottom 0.4s forwards ease-in-out;
           `
-        : css`
+      : css`
             animation: popOutToBottom 0.2s forwards ease-in-out;
           `}
 
@@ -96,6 +100,10 @@ const ModalBlock = styled.div<{ visible: boolean }>`
     }
 
     .left-block {
+      ${media.medium} {
+        display: none;
+      }
+
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
@@ -104,21 +112,22 @@ const ModalBlock = styled.div<{ visible: boolean }>`
       .block-content {
         width: 400px;
       }
-
-      .exit-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        font-size: 1.5rem;
-        color: ${palette.blueGray600};
-        margin-bottom: 2.25rem;
-        margin-bottom: 0;
-        &:hover {
-          color: ${palette.red400};
-        }
-        svg {
-          cursor: pointer;
-        }
-      }
     }
+  }
+`;
+
+const ExitBlock = styled.div`
+  justify-content: flex-end;
+  font-size: 1.5rem;
+  color: ${palette.blueGray600};
+  margin-bottom: 2.25rem;
+  margin-bottom: 0;
+
+  &:hover {
+    color: ${palette.red400};
+  }
+
+  svg {
+    cursor: pointer;
   }
 `;
