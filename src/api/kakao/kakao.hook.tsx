@@ -3,7 +3,7 @@ import { getkakaoKeywordSearchAPI } from "./kakao.api";
 
 export const PAGE_NO = 1;
 export const PAGE_SIZE = 15;
-export const QUERY_KEY = "getkakaoKeywordSearchAPI";
+export const QUERY_KEY = getkakaoKeywordSearchAPI.name;
 
 export const createKey = (keyword?: string) => [QUERY_KEY, keyword];
 

@@ -117,6 +117,37 @@ const globalStyle = css`
     padding-right: 1rem;
   }
 
+  .button-primary.small {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .button-primary {
+    border-radius: 0.5rem;
+    border-width: 1px;
+
+    border-color: ${palette.amber500};
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    line-height: 1.625;
+    --tw-text-opacity: 1;
+    color: ${palette.amber500};
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    &:hover {
+      background: ${palette.amber50};
+      color: ${palette.blueGray800};
+    }
+  }
+
   @keyframes popIn {
     0% {
       opacity: 0.7;

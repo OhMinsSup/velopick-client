@@ -18,9 +18,7 @@ client.interceptors.request.use(
       `%c📦 API 요청 송신  주소:${
         config.url
       } 유형:${config.method?.toUpperCase()}`,
-      "color: #E19A56;",
-
-      config.params
+      "color: #E19A56;"
     );
     return config;
   },
@@ -61,8 +59,7 @@ client.interceptors.response.use(
       `%c📫 API 응답 수신  주소:${
         response.config.url
       } 유형:${response.config.method?.toUpperCase()}`,
-      "color: #31B4D9;",
-      response
+      "color: #31B4D9;"
     );
     return response;
   },
