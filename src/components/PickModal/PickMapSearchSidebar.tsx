@@ -9,22 +9,22 @@ import { useQueryClient } from "react-query";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
-import PlaceCard from "../common/PlaceCard";
-
-import {
-  createKey,
-  useKakaoKeywordSearchQuery,
-} from "../../api/kakao/kakao.hook";
-import { undrawEmpty } from "../../assets/images";
-import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
+import { useKakaoKeywordSearchQuery } from "../../api/kakao/kakao.hook";
+import { createKey } from "../../api/common/common.utils";
+import { getkakaoKeywordSearchAPI } from "../../api/kakao/kakao.api";
 import {
   Document,
   KakaoKeywordSearhModel,
 } from "../../api/kakao/kakao.typedef";
+
+import { undrawEmpty } from "../../assets/images";
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
 import { useGeolocationState } from "../../atoms/geolocationState";
 
-interface PickMapSearchSidebarProps { }
+import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
+import PlaceCard from "../common/PlaceCard";
+
+interface PickMapSearchSidebarProps {}
 const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const queryClient = useQueryClient();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +61,10 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.value && keyword) {
-        queryClient.setQueryData(createKey(keyword), null);
+        queryClient.setQueryData(
+          createKey(getkakaoKeywordSearchAPI.name, keyword),
+          null
+        );
         setKeyword("");
       }
     },

@@ -1,47 +1,31 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 
-import { useTagKeywordSearchQuery } from "../../api/pick/pick.hook";
-import { useTagAction, useTagValue } from "../../atoms/tagState";
+import { useUserTagKeywordSearchQuery } from "../../api/user/user.hook";
+import { useUserAction, useUserValue } from "../../atoms/userState";
 
 import DropdownTagItem from "../ui/DropdownTagItem";
 import TagItem from "../ui/TagItem";
 
-interface TagContainerProps {
+interface UserTagContainerProps {
   label: string;
   placeholder: string;
 }
-const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
-  const tags = useTagValue();
-  const { removeTag, insertTag, changeTag } = useTagAction();
+const UserTagContainer: React.FC<UserTagContainerProps> = ({
+  label,
+  placeholder,
+}) => {
+  const userTags = useUserValue();
+  const { removeUser } = useUserAction();
   const [keyword, setKeyword] = useState("");
-  const { data } = useTagKeywordSearchQuery(keyword);
+  const { data } = useUserTagKeywordSearchQuery(keyword);
   const editableDiv = useRef<HTMLDivElement>(null);
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   }, []);
 
-  const onKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Backspace" && keyword === "") {
-        changeTag(tags.slice(0, tags.length - 1));
-        return;
-      }
-
-      const keys = [",", "Enter"];
-      if (keys.includes(e.key) && tags.length < 5) {
-        // 등록
-        e.preventDefault();
-
-        insertTag(keyword);
-        setKeyword("");
-      }
-    },
-    [tags, keyword]
-  );
-
-  const onRemove = (tag: string) => removeTag(tag);
+  const onRemove = (tagId: number) => removeUser(tagId);
 
   const onClose = () => setKeyword("");
 
@@ -63,20 +47,19 @@ const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
           <div className="relative mb-2">
             <input
               type="text"
-              id="dropdown-tag-input"
+              id="dropdown-user-input"
               autoComplete="off"
               data-toggle="dropdown"
               className="w-full text-gray-800 bg-transparent placeholder-gray-500 focus:outline-none"
               value={keyword}
               placeholder={placeholder}
               onChange={onChange}
-              onKeyPress={onKeyPress}
             />
             {data && data.length ? (
               <div className="absolute right-0 z-10 w-full h-auto overflow-hidden bg-white border rounded-lg shadow-lg top-100">
                 {data.map((tag) => (
                   <DropdownTagItem
-                    type="TAG"
+                    type="USER"
                     key={tag.id}
                     tag={tag}
                     onClose={onClose}
@@ -86,12 +69,12 @@ const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
             ) : null}
           </div>
           <div className="flex flex-row flex-wrap">
-            {tags.length
-              ? tags.map((tag, i) => (
+            {userTags.length
+              ? userTags.map((userTag) => (
                   <TagItem
-                    key={`${tag}-${i}`}
-                    name={tag}
-                    onRemove={() => onRemove(tag)}
+                    key={`${userTag.name}-${userTag.id}`}
+                    name={userTag.name}
+                    onRemove={() => onRemove(userTag.id)}
                   />
                 ))
               : null}
@@ -102,4 +85,4 @@ const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
   );
 };
 
-export default TagContainer;
+export default UserTagContainer;

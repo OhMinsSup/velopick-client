@@ -5,3 +5,9 @@ export type ClientResponse<Data = any> = {
   message: string;
   data: Data;
 };
+
+export interface TagItemModel {
+  id: number;
+  name: string;
+  image?: string;
+}

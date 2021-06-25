@@ -1,15 +1,11 @@
 import { useInfiniteQuery } from "react-query";
 import { getkakaoKeywordSearchAPI } from "./kakao.api";
-
-export const PAGE_NO = 1;
-export const PAGE_SIZE = 15;
-export const QUERY_KEY = getkakaoKeywordSearchAPI.name;
-
-export const createKey = (keyword?: string) => [QUERY_KEY, keyword];
+import { PAGE_NO, PAGE_SIZE } from "../common/common.contant";
+import { createKey } from "../common/common.utils";
 
 export function useKakaoKeywordSearchQuery(keyword?: string) {
   return useInfiniteQuery(
-    createKey(keyword),
+    createKey(getkakaoKeywordSearchAPI.name, keyword),
     ({ pageParam = PAGE_NO }) =>
       getkakaoKeywordSearchAPI({
         page: pageParam,

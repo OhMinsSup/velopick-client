@@ -2,7 +2,7 @@ import tags from "../json/tags.json";
 
 export interface TagKeywordSearchParams {
   query?: string;
-  size?: number;
+  size: number;
 }
 
 export const getTagKeywordSearchAPI = async (

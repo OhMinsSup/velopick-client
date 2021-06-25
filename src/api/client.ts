@@ -24,26 +24,11 @@ client.interceptors.request.use(
   },
   (error) => {
     const now = new Date();
+
     console.error(
       `${now.toISOString()} [ ${error.config.method.toUpperCase()} ] :`,
       error.request.path
     );
-    console.log("\n[ Stack ] : ", error);
-
-    if (error.request) {
-      console.log("\n[ RequestHeader ] : ", error.request._header);
-    }
-
-    if (error.config) {
-      console.log("\n[ ConfigHeader ] : ", error.config.headers);
-      console.log("\n[ RequestQuery ] : ", error.config.params);
-      console.log("\n[ RequestBody ] : ", error.config.data);
-    }
-
-    if (error.response) {
-      console.log("\n[ ResponseHeader ] : ", error.response.headers);
-      console.log("\n[ ResponseData ] : ", error.response.data);
-    }
 
     console.log("======================================================\n");
 

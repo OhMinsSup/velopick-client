@@ -4,7 +4,7 @@ import { atom, useRecoilState, useRecoilValue } from "recoil";
 export interface UsersState {
   id: number;
   name: string;
-  thumbnail?: string;
+  image?: string;
 }
 
 const usersState = atom<UsersState[]>({
