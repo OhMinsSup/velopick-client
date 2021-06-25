@@ -1,8 +1,16 @@
 import { atom, useRecoilState, useRecoilValue } from "recoil";
 
-export interface PlaceState {}
+export interface PlacePositionState {
+  lat: number;
+  lng: number;
+}
 
-const initialState: PlaceState = {};
+export interface PlaceState {
+  lat: number;
+  lng: number;
+}
+
+const initialState: PlaceState[] = [];
 
 const placeState = atom({
   key: "placeState",

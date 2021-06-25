@@ -26,6 +26,14 @@ export class MarkerFactory {
     return this.kakaoMap;
   }
 
+  get markerMaps() {
+    return this.markerObject;
+  }
+
+  get markers() {
+    return this.markerObjects;
+  }
+
   generateLatLng = (lat: number | string, lng: number | string) => {
     return new kakao.maps.LatLng(Number(lat), Number(lng));
   };
@@ -51,7 +59,7 @@ export class MarkerFactory {
     if (this.markerObjects.length) {
       this.markerObjects.forEach((marker) => {
         kakao.maps.event.removeListener(marker, "click", () => {
-          this.handleClickMarker(marker)
+          this.handleClickMarker(marker);
         });
         marker.setMap(null);
       });
@@ -64,13 +72,13 @@ export class MarkerFactory {
 
   handleClickMarker = (selectMarker: kakao.maps.Marker) => {
     for (const obj of this.markerObject.entries()) {
-      const [key, item] = obj
+      const [key, item] = obj;
       if (item === selectMarker) {
         kakao.maps.event.removeListener(selectMarker, "click", () => {
-          this.handleClickMarker(selectMarker)
+          this.handleClickMarker(selectMarker);
         });
         selectMarker.setMap(null);
-        this.markerObject.delete(key)
+        this.markerObject.delete(key);
       }
     }
   };
@@ -87,7 +95,7 @@ export class MarkerFactory {
       position: latLng,
     });
 
-    const lastId = this.markerObject.size + 1
+    const lastId = this.markerObject.size + 1;
 
     // 생성한 마커를 캐시형태로 저장한다.
     this.markerObject.set(lastId, marker);
