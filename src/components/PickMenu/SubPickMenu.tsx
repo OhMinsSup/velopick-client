@@ -4,12 +4,12 @@ import { css } from "@emotion/react";
 import TagContainer from "./TagContainer";
 import UserTagContainer from "./UserTagContainer";
 import PlaceMenuItem from "./PlaceMenuItem";
-import { usePlaceState } from "../../atoms/placeState";
+import { usePlaceValue } from "../../atoms/placeState";
 
 interface SubPickMenuProps {}
 const SubPickMenu: React.FC<SubPickMenuProps> = () => {
-  const [places, setPlaace] = usePlaceState();
-  console.log(places);
+  const places = usePlaceValue();
+
   return (
     <>
       <TagContainer label="태그" placeholder="태그를 입력해주세요." />
@@ -18,7 +18,9 @@ const SubPickMenu: React.FC<SubPickMenuProps> = () => {
         className="divide-y divide-gray-100 overflow-y-scroll"
         css={scrollStyles}
       >
-        <PlaceMenuItem />
+        {places.map((place) => (
+          <PlaceMenuItem key={place.id} place={place} />
+        ))}
       </ul>
     </>
   );

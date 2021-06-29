@@ -10,7 +10,7 @@ import { createMarkerFactory } from "../libs/marker/markerFactory";
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
-  const [, setPlaace] = usePlaceState();
+  const [, setPlace] = usePlaceState();
   const [visiblePickModal, setVisiblePickModal] = useState<boolean>(false);
 
   const onShowPickModal = useCallback(() => {
@@ -22,10 +22,8 @@ const PickPage: React.FC<PickPageProps> = () => {
 
     const factory = createMarkerFactory();
 
-    for (const marker of factory.markers) {
-      const position = marker.getPosition();
-      const item = { lat: position.getLat(), lng: position.getLng() };
-      setPlaace((olds) => [...olds, item]);
+    for (const place of factory.places) {
+      setPlace((olds) => [...olds, place]);
     }
 
     factory.unmount();
