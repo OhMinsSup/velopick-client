@@ -1,10 +1,11 @@
-import { atom, useRecoilState, useRecoilValue } from "recoil";
+import { useCallback } from "react";
+import {
+  atom,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import { KakaoPlaceSearchResult } from "../libs/marker/markerFactory";
-
-export interface PlacePositionState {
-  lat: number;
-  lng: number;
-}
 
 export interface PlaceState extends KakaoPlaceSearchResult {}
 
@@ -15,10 +16,20 @@ const placeState = atom({
   default: initialState,
 });
 
-export function usePlaceValue() {
+export function usePlacesValue() {
   return useRecoilValue(placeState);
 }
 
-export function usePlaceState() {
+export function usePlacesState() {
   return useRecoilState(placeState);
+}
+
+export function usePlacesClearState() {
+  const set = useSetRecoilState(placeState);
+
+  const placesClear = useCallback(() => {
+    set([]);
+  }, [set]);
+
+  return { placesClear };
 }

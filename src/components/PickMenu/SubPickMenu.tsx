@@ -4,11 +4,11 @@ import { css } from "@emotion/react";
 import TagContainer from "./TagContainer";
 import UserTagContainer from "./UserTagContainer";
 import PlaceMenuItem from "./PlaceMenuItem";
-import { usePlaceValue } from "../../atoms/placeState";
+import { usePlacesValue } from "../../atoms/placeState";
 
 interface SubPickMenuProps {}
 const SubPickMenu: React.FC<SubPickMenuProps> = () => {
-  const places = usePlaceValue();
+  const places = usePlacesValue();
 
   return (
     <>

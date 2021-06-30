@@ -12,7 +12,9 @@ class KakaoMapClickManager extends Subscribable {
   }
 
   protected onUnsubscribe(): void {
+    console.log("onUnsubscribe => start");
     if (this.removeEventListener) {
+      console.log("onUnsubscribe => removeEventListener");
       this.removeEventListener();
       this.removeEventListener = undefined;
     }
@@ -48,6 +50,7 @@ class KakaoMapClickManager extends Subscribable {
       // Listen to visibillitychange and focus
       kakao.maps.event.addListener(kakaoMap, "click", listener);
       return () => {
+        console.log("eventListener => clear");
         // Be sure to unsubscribe if a new handler is set
         kakao.maps.event.removeListener(kakaoMap, "click", listener);
       };

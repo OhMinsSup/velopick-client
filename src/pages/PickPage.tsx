@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { BiLocationPlus } from "react-icons/bi";
-import { usePlaceState } from "../atoms/placeState";
+import uniqBy from "lodash/uniqBy";
+import { usePlacesState } from "../atoms/placeState";
 
 import { PickEditor } from "../components/PickEditor";
 import { PickModal } from "../components/PickModal";
@@ -10,7 +11,7 @@ import { createMarkerFactory } from "../libs/marker/markerFactory";
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
-  const [, setPlace] = usePlaceState();
+  const [, setPlaces] = usePlacesState();
   const [visiblePickModal, setVisiblePickModal] = useState<boolean>(false);
 
   const onShowPickModal = useCallback(() => {
@@ -23,7 +24,7 @@ const PickPage: React.FC<PickPageProps> = () => {
     const factory = createMarkerFactory();
 
     for (const place of factory.places) {
-      setPlace((olds) => [...olds, place]);
+      setPlaces((olds) => uniqBy([...olds, place], "id"));
     }
 
     factory.unmount();
@@ -31,7 +32,7 @@ const PickPage: React.FC<PickPageProps> = () => {
 
   return (
     <>
-      <div className="w-full pt-5">
+      <div className="w-full pt-5 md:px-5">
         <div>
           <div className="flex flex-row">
             <LabelButton

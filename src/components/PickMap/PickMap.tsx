@@ -1,25 +1,24 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import {
-  BiCurrentLocation,
-  BiPlus,
-  BiMinus,
-} from "react-icons/bi";
+import { BiCurrentLocation, BiPlus, BiMinus, BiRefresh } from "react-icons/bi";
 
+import palette from "../../libs/style/palette";
 import { useGeolocationState } from "../../atoms/geolocationState";
 import { createMarkerFactory } from "../../libs/marker/markerFactory";
-import palette from "../../libs/style/palette";
+import { usePlacesClearState, usePlacesValue } from "../../atoms/placeState";
 
-interface PickMapProps { }
+interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
+  const places = usePlacesValue();
+  const { placesClear } = usePlacesClearState();
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
 
   const divRef = useRef<HTMLDivElement | null>(null);
 
   const gelocation = () => {
     navigator.geolocation.getCurrentPosition(handleGeoSucces, handleGeoError);
-  }
+  };
 
   const handleGeoError: PositionErrorCallback = (positionError) => {
     console.error(positionError);
@@ -41,23 +40,38 @@ const PickMap: React.FC<PickMapProps> = () => {
     if (!factory.kakaoMapObj) return;
 
     const level = factory.kakaoMapObj.getLevel();
-    factory.kakaoMapObj.setLevel(level + 1)
-  }, [])
+    factory.kakaoMapObj.setLevel(level + 1);
+  }, []);
 
   const onClickMinusZoom = useCallback(() => {
     const factory = createMarkerFactory();
     if (!factory.kakaoMapObj) return;
 
     const level = factory.kakaoMapObj.getLevel();
-    factory.kakaoMapObj.setLevel(level - 1)
-  }, [])
+    factory.kakaoMapObj.setLevel(level - 1);
+  }, []);
 
   const onClickCurrentLocation = useCallback(() => {
-    gelocation()
-  }, [])
+    gelocation();
+  }, []);
 
-  useEffect(() => { gelocation() }, []);
+  const onRefreshMap = useCallback(() => {
+    const factory = createMarkerFactory();
+    if (!factory.kakaoMapObj) {
+      gelocation();
+      return;
+    }
+    placesClear();
+    factory.unmount();
+    gelocation();
+  }, []);
 
+  // gelocation info
+  useEffect(() => {
+    gelocation();
+  }, []);
+
+  // maker object logical
   useEffect(() => {
     if (
       divRef.current &&
@@ -65,7 +79,6 @@ const PickMap: React.FC<PickMapProps> = () => {
     ) {
       const { longitude, latitude } = currentGeolocation;
       const factory = createMarkerFactory();
-
       if (!factory.kakaoMapObj) {
         const mapOption = {
           center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
@@ -80,6 +93,11 @@ const PickMap: React.FC<PickMapProps> = () => {
         );
       }
 
+      // set select places
+      if (places.length) {
+        factory.setPlaces(places);
+      }
+
       factory.mount();
     }
   }, [
@@ -90,9 +108,9 @@ const PickMap: React.FC<PickMapProps> = () => {
 
   return (
     <>
-      <div css={pickMapStyles} ref={divRef} />
+      <div css={pickMapStyles} className="bg-gray-50" ref={divRef} />
       <div css={pickMapControllerStyles}>
-        <MapControllerButtonBlock
+        <ControllerButtonBlock
           type="button"
           className="shadow"
           onClick={onClickCurrentLocation}
@@ -100,7 +118,7 @@ const PickMap: React.FC<PickMapProps> = () => {
           <div className="controller-wrapper">
             <BiCurrentLocation />
           </div>
-        </MapControllerButtonBlock>
+        </ControllerButtonBlock>
 
         <ZoomControllerBlock className="shadow">
           <div className="controller-wrapper">
@@ -112,6 +130,16 @@ const PickMap: React.FC<PickMapProps> = () => {
             </ZoomButtonBlock>
           </div>
         </ZoomControllerBlock>
+
+        <ControllerButtonBlock
+          type="button"
+          className="shadow"
+          onClick={onRefreshMap}
+        >
+          <div className="controller-wrapper">
+            <BiRefresh />
+          </div>
+        </ControllerButtonBlock>
       </div>
     </>
   );
@@ -164,7 +192,7 @@ const ZoomButtonBlock = styled.button`
   }
 `;
 
-const MapControllerButtonBlock = styled.button<{ active?: boolean }>`
+const ControllerButtonBlock = styled.button<{ active?: boolean }>`
   display: block;
   position: relative;
   width: 32px;

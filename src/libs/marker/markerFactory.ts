@@ -104,10 +104,23 @@ export class MarkerFactory {
     this.kakaoMap = map;
   }
 
+  setPlaces(places: KakaoPlaceSearchResult[]) {
+    places.forEach((place) => {
+      const { x, y } = place;
+      const latLng = this.generateLatLng(y, x);
+      this.makeAddMarker(latLng);
+    });
+  }
+
   mount(): void {
     if (!this.kakaoMap) return;
     // set manager kakao map objects
     kakaoMapClickManager.setKakaoMap(this.kakaoMap);
+
+    if (this.unsubscribeKakaoMapClick) {
+      console.log("mount => unsubscribeKakaoMapClick");
+      this.unsubscribeKakaoMapClick();
+    }
 
     this.unsubscribeKakaoMapClick = kakaoMapClickManager.subscribe((event) => {
       this.handleClickMap(event);
@@ -130,6 +143,8 @@ export class MarkerFactory {
     this.kakaoMap = null;
     this.markerObject.clear();
     this.markerObjects = [];
+    this.placeObject.clear();
+    this.placeObjects = [];
   }
 
   private handleClickMarker = (selectMarker: kakao.maps.Marker) => {
@@ -151,48 +166,26 @@ export class MarkerFactory {
   };
 
   private handleClickMap = (event: any) => {
+    console.count("event => call");
     this.makeAddMarker(event.latLng);
   };
 
   private handleCallbackPlacesSearch = (
     result: KakaoPlaceSearchResult[],
     status: kakao.maps.services.Status,
-    markerId: number
+    latLng: kakao.maps.LatLng
   ) => {
     if (status !== kakao.maps.services.Status.OK) return;
-    const headResult = head(result);
-    console.log(result);
-    console.log(headResult);
-    if (!headResult) return;
+    const data = head(result);
+    if (!data) return;
 
-    // 생성한 장소를 캐시형태로 저장한다. (마커 아이디를 key로 해서 저장)
-    this.placeObject.set(markerId, headResult);
-
-    const obj = { ...headResult, markerId };
-    this.placeObjects.push(obj);
-  };
-
-  private handleCallbackCoord2Address = (
-    result: KakaoCoord2Address[],
-    status: kakao.maps.services.Status,
-    markerId: number
-  ) => {
-    if (status !== kakao.maps.services.Status.OK) return;
-    const headResult = head(result);
-    if (!headResult) return;
-
-    const {
-      address: { address_name },
-    } = headResult;
-    const places = new kakao.maps.services.Places();
-
-    places.keywordSearch(address_name, (result, status) =>
-      this.handleCallbackPlacesSearch(result, status, markerId)
+    const checkIndex = this.placeObjects.findIndex(
+      (place) => place.id === data.id
     );
-  };
-
-  makeAddMarker = (latLng: kakao.maps.LatLng | null) => {
-    if (!latLng) return;
+    if (checkIndex !== -1) {
+      console.log(`reduplication => places(index: ${checkIndex})`);
+      return;
+    }
 
     const marker = new kakao.maps.Marker({
       map: this.kakaoMap ?? undefined,
@@ -205,14 +198,43 @@ export class MarkerFactory {
     this.markerObject.set(lastId, marker);
     this.markerObjects.push(marker);
 
-    const geocoder = new kakao.maps.services.Geocoder();
+    // 생성한 장소를 캐시형태로 저장한다. (마커 아이디를 key로 해서 저장)
+    this.placeObject.set(lastId, data);
 
-    geocoder.coord2Address(latLng.getLng(), latLng.getLat(), (result, status) =>
-      this.handleCallbackCoord2Address(result, status, lastId)
-    );
+    const obj = { ...data, markerId: lastId };
+    this.placeObjects.push(obj);
 
     kakao.maps.event.addListener(marker, "click", () =>
       this.handleClickMarker(marker)
+    );
+  };
+
+  private handleCallbackCoord2Address = (
+    result: KakaoCoord2Address[],
+    status: kakao.maps.services.Status,
+    latLng: kakao.maps.LatLng
+  ) => {
+    if (status !== kakao.maps.services.Status.OK) return;
+    const data = head(result);
+    if (!data) return;
+
+    const {
+      address: { address_name },
+    } = data;
+    const places = new kakao.maps.services.Places();
+
+    places.keywordSearch(address_name, (result, status) =>
+      this.handleCallbackPlacesSearch(result, status, latLng)
+    );
+  };
+
+  makeAddMarker = (latLng: kakao.maps.LatLng | null) => {
+    if (!latLng) return;
+
+    const geocoder = new kakao.maps.services.Geocoder();
+
+    geocoder.coord2Address(latLng.getLng(), latLng.getLat(), (result, status) =>
+      this.handleCallbackCoord2Address(result, status, latLng)
     );
   };
 }
