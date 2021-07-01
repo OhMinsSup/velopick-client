@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
+import cn from "classnames";
 
 import { useMutationSignup, GenderType } from "../api/auth";
+import Head from "../components/ui/Head";
 
 const schema = yup.object().shape({
   username: yup
@@ -23,65 +23,49 @@ const schema = yup.object().shape({
     .string()
     .min(6, "최소 6자 이상을 입력하세요.")
     .required("비밀번호를 입력해주세요."),
+  passwordConfirm: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
+    .required("비밀번호 확인을 입력해주세요."),
   birthday: yup.date().required("생일을 입력해주세요."),
 });
+
+const iptClassName =
+  "w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:bg-white focus:outline-none";
 
 interface FormFieldValue {
   username: string;
   email: string;
   password: string;
+  passwordConfirm: string;
   birthday: Date | null;
   gender: GenderType;
 }
 
 interface RegisterPageProps {}
 const RegisterPage: React.FC<RegisterPageProps> = () => {
-  const { register, handleSubmit, reset } = useForm<FormFieldValue>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormFieldValue>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues: {
       username: "",
       email: "",
       password: "",
+      passwordConfirm: "",
       gender: "M",
       birthday: null,
     },
+    criteriaMode: "firstError",
   });
 
-  const { addToast } = useToasts();
-  const { mutateAsync } = useMutationSignup();
+  const { mutate } = useMutationSignup();
 
-  const onSubmit = async (data: FormFieldValue) => {
-    try {
-      const result = await mutateAsync(data);
-      if (!result.ok) {
-        addToast(result.message, {
-          appearance: "error",
-          autoDismiss: true,
-        });
-        return;
-      }
-
-      if (!result.data) {
-        addToast("회원가입에 실패하였습니다.", {
-          appearance: "error",
-          autoDismiss: true,
-        });
-        return;
-      }
-
-      addToast("회원가입에 성공하였습니다. \n 로그인을 해주세요.", {
-        appearance: "success",
-        autoDismiss: true,
-      });
-    } catch (error) {
-      console.error(error);
-      addToast("회원가입에 실패하였습니다", {
-        appearance: "error",
-        autoDismiss: true,
-      });
-    }
-  };
+  const onSubmit = (data: FormFieldValue) => mutate(data);
 
   useEffect(() => {
     return () => reset();
@@ -89,9 +73,10 @@ const RegisterPage: React.FC<RegisterPageProps> = () => {
 
   return (
     <>
-      <Helmet>
-        <title>회원가입 – Velopick</title>
-      </Helmet>
+      <Head
+        title="회원가입 – Velopick"
+        description="velopick에 회원가입 또는 로그인을 하여 나만의 장소를 추가하세요!"
+      />
       <section className="flex flex-col md:flex-row h-screen items-center">
         <div
           className="bg-white w-full md:max-w-md lg:max-w-full md:mx-auto md:w-1/2 xl:w-1/3 h-screen px-6 lg:px-16 xl:px-12
@@ -107,66 +92,110 @@ const RegisterPage: React.FC<RegisterPageProps> = () => {
               </Link>
             </h1>
 
-            <h1 className="text-xl md:text-2xl font-bold leading-tight mt-12">
+            <h1 className="text-xl md:text-2xl font-bold leading-tight mt-5">
               회원가입
             </h1>
 
-            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label className="block text-gray-700">이름</label>
+                <label htmlFor="username" className="block text-gray-700">
+                  이름
+                </label>
                 <input
                   {...register("username")}
+                  id="username"
                   type="text"
                   name="username"
                   placeholder="이름"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-amber-500 focus:bg-white focus:outline-none"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.username?.message,
+                  })}
                   autoComplete="off"
                 />
               </div>
 
-              <div>
-                <label className="block text-gray-700">이메일</label>
+              <div className="mt-1">
+                <label htmlFor="email" className="block text-gray-700">
+                  이메일
+                </label>
                 <input
                   {...register("email")}
+                  id="email"
                   type="text"
                   name="email"
                   placeholder="이메일"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-amber-500 focus:bg-white focus:outline-none"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.email?.message,
+                  })}
                   autoComplete="off"
                 />
               </div>
 
-              <div className="mt-4">
-                <label className="block text-gray-700">패스워드</label>
+              <div className="mt-1">
+                <label htmlFor="password" className="block text-gray-700">
+                  패스워드
+                </label>
                 <input
                   {...register("password")}
+                  id="password"
                   type="password"
                   name="password"
                   placeholder="비밀번호"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-amber-500 focus:bg-white focus:outline-none"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.password?.message,
+                  })}
                 />
               </div>
 
-              <div className="mt-4">
-                <label className="block text-gray-700">성별</label>
+              <div className="mt-1">
+                <label
+                  htmlFor="passwordConfirm"
+                  className="block text-gray-700"
+                >
+                  패스워드 확인
+                </label>
+                <input
+                  {...register("passwordConfirm")}
+                  id="passwordConfirm"
+                  type="password"
+                  name="passwordConfirm"
+                  placeholder="비밀번호 확인"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.passwordConfirm?.message,
+                  })}
+                />
+              </div>
+
+              <div className="mt-1">
+                <label htmlFor="genders" className="block text-gray-700">
+                  성별
+                </label>
                 <select
+                  id="gender"
                   {...register("gender")}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-amber-500 focus:bg-white focus:outline-none"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.gender?.message,
+                  })}
                 >
                   <option value="M">남자</option>
                   <option value="F">여자</option>
                 </select>
               </div>
 
-              <div className="mt-4">
-                <label className="block text-gray-700">생일</label>
+              <div className="mt-1">
+                <label htmlFor="birthday" className="block text-gray-700">
+                  생일
+                </label>
                 <input
                   {...register("birthday", {
                     valueAsDate: true,
                   })}
+                  id="birthday"
                   type="date"
                   name="birthday"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-amber-500 focus:bg-white focus:outline-none"
+                  className={cn(iptClassName, {
+                    "border-red-500": errors.birthday?.message,
+                  })}
                 />
               </div>
 
