@@ -61,6 +61,7 @@ const PickEditor: React.FC<PickEditorProps> = () => {
           id="slug"
           name="slug"
           placeholder="URL"
+          autoComplete="off"
           value={form.slug}
           onChange={onChange}
         />

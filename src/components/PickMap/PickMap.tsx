@@ -11,7 +11,7 @@ import { usePlacesClearState, usePlacesValue } from "../../atoms/placeState";
 interface PickMapProps {}
 const PickMap: React.FC<PickMapProps> = () => {
   const places = usePlacesValue();
-  const { placesClear } = usePlacesClearState();
+  const { clear } = usePlacesClearState();
   const [currentGeolocation, setCurrentGeolocation] = useGeolocationState();
 
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -61,7 +61,7 @@ const PickMap: React.FC<PickMapProps> = () => {
       gelocation();
       return;
     }
-    placesClear();
+    clear();
     factory.unmount();
     gelocation();
   }, []);
@@ -99,6 +99,8 @@ const PickMap: React.FC<PickMapProps> = () => {
       }
 
       factory.mount();
+
+      (window as any).factory = factory;
     }
   }, [
     currentGeolocation,

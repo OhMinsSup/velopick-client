@@ -27,9 +27,16 @@ export function usePlacesState() {
 export function usePlacesClearState() {
   const set = useSetRecoilState(placeState);
 
-  const placesClear = useCallback(() => {
+  const clear = useCallback(() => {
     set([]);
   }, [set]);
 
-  return { placesClear };
+  const remove = useCallback(
+    (id: string) => {
+      set((prev) => prev.filter((place) => place.id !== id));
+    },
+    [set]
+  );
+
+  return { clear, remove };
 }
