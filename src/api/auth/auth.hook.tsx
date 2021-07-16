@@ -20,12 +20,6 @@ export function useMutationSignup() {
   const history = useHistory();
   const { addToast } = useToasts();
 
-  const errorMessage = () =>
-    addToast("회원가입에 실패하였습니다. \n 다시 시도 해주세요.", {
-      appearance: "error",
-      autoDismiss: true,
-    });
-
   return useMutation<PostSignupResponse, any, SignupRequestDTO>(
     (body) => postSignupAPI(body),
     {
@@ -36,11 +30,6 @@ export function useMutationSignup() {
               appearance: "error",
               autoDismiss: true,
             });
-            return;
-          }
-
-          if (!res.data) {
-            errorMessage();
             return;
           }
 
@@ -55,7 +44,10 @@ export function useMutationSignup() {
         }
       },
       onError: (err, variables, context) => {
-        errorMessage();
+        addToast("회원가입에 실패하였습니다. \n 다시 시도 해주세요.", {
+          appearance: "error",
+          autoDismiss: true,
+        });
       },
     }
   );

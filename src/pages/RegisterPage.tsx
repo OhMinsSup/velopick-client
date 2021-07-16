@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import omit from "lodash/omit";
 import cn from "classnames";
 
 import { useMutationSignup, GenderType } from "../api/auth";
@@ -11,8 +12,7 @@ import Head from "../components/ui/Head";
 const schema = yup.object().shape({
   username: yup
     .string()
-    .matches(/^[a-z0-9-_]+$/, "잘못된 형식의 이름입니다.")
-    .min(6, "최소 6자 이상을 입력하세요.")
+    .matches(/^[ㄱ-ㅎ가-힣a-z0-9-_]+$/, "잘못된 형식의 이름입니다.")
     .max(16, "최대 16자 이하로 입력하세요.")
     .required("이름을 입력해주세요."),
   email: yup
@@ -30,6 +30,15 @@ const schema = yup.object().shape({
   birthday: yup.date().required("생일을 입력해주세요."),
 });
 
+const defaultValues: FormFieldValue = {
+  username: "",
+  email: "",
+  password: "",
+  passwordConfirm: "",
+  gender: "M",
+  birthday: new Date(),
+};
+
 const iptClassName =
   "w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:bg-white focus:outline-none";
 
@@ -38,7 +47,7 @@ interface FormFieldValue {
   email: string;
   password: string;
   passwordConfirm: string;
-  birthday: Date | null;
+  birthday: Date;
   gender: GenderType;
 }
 
@@ -47,29 +56,24 @@ const RegisterPage: React.FC<RegisterPageProps> = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FormFieldValue>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      passwordConfirm: "",
-      gender: "M",
-      birthday: null,
-    },
+    defaultValues,
     criteriaMode: "firstError",
   });
 
   const { mutate } = useMutationSignup();
 
-  const onSubmit = (data: FormFieldValue) => mutate(data);
+  const onSubmit = (data: FormFieldValue) => {
+    const body = omit(
+      { ...data, birthday: data.birthday.getTime() },
+      "passwordConfirm"
+    );
 
-  useEffect(() => {
-    return () => reset();
-  }, []);
+    mutate(body);
+  };
 
   return (
     <>

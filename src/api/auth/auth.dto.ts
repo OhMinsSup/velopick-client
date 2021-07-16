@@ -24,7 +24,7 @@ export interface SignupRequestDTO {
   username: string;
   email: string;
   password: string;
-  birthday: Date | null;
+  birthday: number;
   gender: GenderType;
 }
 
