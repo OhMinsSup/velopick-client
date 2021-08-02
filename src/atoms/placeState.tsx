@@ -5,9 +5,9 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
-import { KakaoPlaceSearchResult } from "../libs/marker/markerFactory";
+import { KakaoPlace } from "../libs/marker/types";
 
-export interface PlaceState extends KakaoPlaceSearchResult {}
+export interface PlaceState extends KakaoPlace {}
 
 const initialState: PlaceState[] = [];
 
