@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { KakaoPlace, KakaoPlaceSearchResult } from "./types";
 
-class Marker {
+export class Marker {
   // marker instance id
   private id: string;
   // kakao 맵
@@ -15,20 +15,20 @@ class Marker {
   // 장소 정보
   private placeInfo: Pick<KakaoPlace, "name" | "category" | "category_code">;
 
-  private callback: (instace: Marker) => void;
+  private removeCallback: (instace: Marker) => void;
 
   constructor({
     map,
     placeInfo,
     position,
     address,
-    callback,
+    removeCallback,
   }: {
     map: kakao.maps.Map;
     placeInfo: KakaoPlaceSearchResult | null;
     position: kakao.maps.LatLng;
     address: string;
-    callback: (instace: Marker) => void;
+    removeCallback: (instace: Marker) => void;
   }) {
     this.id = nanoid(10);
 
@@ -46,7 +46,7 @@ class Marker {
       category: placeInfo?.category_group_name ?? null,
       category_code: placeInfo?.category_group_code ?? null,
     };
-    this.callback = callback;
+    this.removeCallback = removeCallback;
 
     this.addEventListener();
   }
@@ -55,11 +55,25 @@ class Marker {
     return this.id;
   }
 
-  addEventListener = () => {
+  getPosition() {
+    return this.position;
+  }
+
+  getAddress() {
+    return this.address;
+  }
+
+  getPlaceInfo() {
+    return this.placeInfo;
+  }
+
+  private addEventListener = () => {
+    // add kakao marker event listener
     kakao.maps.event.addListener(this.marker, "click", this.handleClickMarker);
   };
 
-  removeEventListener = () => {
+  private removeEventListener = () => {
+    // remove kakao marker event listener
     kakao.maps.event.removeListener(
       this.marker,
       "click",
@@ -68,16 +82,39 @@ class Marker {
   };
 
   private handleClickMarker = () => {
-    // 이벤트 해제
-    this.removeEventListener();
-    if (
-      !this.callback ||
-      (this.callback && typeof this.callback !== "function")
-    ) {
-      return;
+    try {
+      // 이벤트 해제
+      this.removeEventListener();
+      if (
+        !this.removeCallback ||
+        (this.removeCallback && typeof this.removeCallback !== "function")
+      ) {
+        throw new Error("callback is not a function");
+      }
+      this.removeCallback(this);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    this.callback(this);
   };
+
+  destroy() {
+    this.removeEventListener();
+  }
+
+  setMarkerId(id: string) {
+    try {
+      if (!id) {
+        const error = new Error();
+        error.name = "marker validation";
+        error.message = "marker id is empty";
+      }
+      this.id = id;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
   toJSON() {
     return {
@@ -89,5 +126,3 @@ class Marker {
     };
   }
 }
-
-export default Marker;

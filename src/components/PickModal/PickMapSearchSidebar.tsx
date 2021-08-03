@@ -38,7 +38,7 @@ const PickMapSearchSidebar: React.FC<PickMapSearchSidebarProps> = () => {
   const onClickPlaceLocation = useCallback((document: Document) => {
     const factory = createMarkerFactory();
     const latLng = factory.generateLatLng(document.y, document.x);
-    factory.makeAddMarker(latLng);
+    factory.applyMarker(latLng);
 
     setCurrentGeolocation({
       latitude: latLng.getLat(),

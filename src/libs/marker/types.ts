@@ -52,9 +52,3 @@ export interface KakaoPlace {
   x: string;
   y: string;
 }
-
-export interface NomalizedKakaoPlaceParams {
-  latLng: kakao.maps.LatLng;
-  search?: KakaoPlaceSearchResult;
-  address_name?: string;
-}

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { BiLocationPlus } from "react-icons/bi";
-import uniqBy from "lodash/uniqBy";
 import { usePlacesState } from "../atoms/placeState";
 
 import { PickEditor } from "../components/PickEditor";
@@ -22,11 +21,7 @@ const PickPage: React.FC<PickPageProps> = () => {
     setVisiblePickModal(false);
 
     const factory = createMarkerFactory();
-
-    for (const place of factory.places) {
-      setPlaces((olds) => uniqBy([...olds, place], "id"));
-    }
-
+    setPlaces(factory.totalMarkers);
     factory.unmount();
   }, []);
 

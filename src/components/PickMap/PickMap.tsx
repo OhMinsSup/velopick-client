@@ -37,18 +37,18 @@ const PickMap: React.FC<PickMapProps> = () => {
 
   const onClickPlusZoom = useCallback(() => {
     const factory = createMarkerFactory();
-    if (!factory.kakaoMapObj) return;
+    if (!factory.map) return;
 
-    const level = factory.kakaoMapObj.getLevel();
-    factory.kakaoMapObj.setLevel(level + 1);
+    const level = factory.map.getLevel();
+    factory.map.setLevel(level + 1);
   }, []);
 
   const onClickMinusZoom = useCallback(() => {
     const factory = createMarkerFactory();
-    if (!factory.kakaoMapObj) return;
+    if (!factory.map) return;
 
-    const level = factory.kakaoMapObj.getLevel();
-    factory.kakaoMapObj.setLevel(level - 1);
+    const level = factory.map.getLevel();
+    factory.map.setLevel(level - 1);
   }, []);
 
   const onClickCurrentLocation = useCallback(() => {
@@ -57,7 +57,7 @@ const PickMap: React.FC<PickMapProps> = () => {
 
   const onRefreshMap = useCallback(() => {
     const factory = createMarkerFactory();
-    if (!factory.kakaoMapObj) {
+    if (!factory.map) {
       gelocation();
       return;
     }
@@ -79,7 +79,7 @@ const PickMap: React.FC<PickMapProps> = () => {
     ) {
       const { longitude, latitude } = currentGeolocation;
       const factory = createMarkerFactory();
-      if (!factory.kakaoMapObj) {
+      if (!factory.map) {
         const mapOption = {
           center: new kakao.maps.LatLng(latitude, longitude), // 지도의 중심좌표
           level: 3, // 지도의 확대 레벨
@@ -88,14 +88,7 @@ const PickMap: React.FC<PickMapProps> = () => {
         const map = new kakao.maps.Map(divRef.current, mapOption);
         factory.setMap(map);
       } else {
-        factory.kakaoMapObj.setCenter(
-          new kakao.maps.LatLng(latitude, longitude)
-        );
-      }
-
-      // set select places
-      if (places.length) {
-        factory.setPlaces(places);
+        factory.map.setCenter(new kakao.maps.LatLng(latitude, longitude));
       }
 
       factory.mount();
@@ -107,6 +100,14 @@ const PickMap: React.FC<PickMapProps> = () => {
     currentGeolocation.latitude,
     currentGeolocation.longitude,
   ]);
+
+  useEffect(() => {
+    // set select places
+    const factory = createMarkerFactory();
+    if (!places.length || !factory.map) return;
+    console.log("places", places);
+    factory.setPlaces(places);
+  }, [places]);
 
   return (
     <>
