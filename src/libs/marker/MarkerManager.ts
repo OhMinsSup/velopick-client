@@ -2,7 +2,6 @@ import { nanoid } from "nanoid";
 import head from "lodash/head";
 import { KakaoCoord2Address, KakaoPlaceSearchResult } from "./types";
 import { Marker } from "./Marker";
-import palette from "../style/palette";
 
 export class MarkerManager {
   // marker manager id
@@ -184,27 +183,9 @@ export class MarkerManager {
       this.totalMarkerSupply = this.totalMarkerSupply + 1;
 
       console.log("add allMarkerByIds", this.allMarkerByIds);
-      this.makeLine();
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
-
-  makeLine() {
-    const path = [];
-    for (const marker of this.allMarkers) {
-      path.push(marker.getPosition());
-    }
-
-    const polyline = new kakao.maps.Polyline({
-      path,
-      strokeWeight: 2,
-      strokeColor: palette.amber500,
-      strokeOpacity: 0.8,
-      strokeStyle: "solid",
-    });
-
-    polyline.setMap(this.map);
-  }
 }

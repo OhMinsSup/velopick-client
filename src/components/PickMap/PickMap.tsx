@@ -5,7 +5,7 @@ import { BiCurrentLocation, BiPlus, BiMinus, BiRefresh } from "react-icons/bi";
 
 import palette from "../../libs/style/palette";
 import { useGeolocationState } from "../../atoms/geolocationState";
-import { createMarkerFactory } from "../../libs/marker/markerFactory";
+import { createMarkerFactory } from "../../libs/marker/MarkerFactory";
 import { usePlacesClearState, usePlacesValue } from "../../atoms/placeState";
 
 interface PickMapProps {}
@@ -92,8 +92,6 @@ const PickMap: React.FC<PickMapProps> = () => {
       }
 
       factory.mount();
-
-      (window as any).factory = factory;
     }
   }, [
     currentGeolocation,
@@ -105,7 +103,6 @@ const PickMap: React.FC<PickMapProps> = () => {
     // set select places
     const factory = createMarkerFactory();
     if (!places.length || !factory.map) return;
-    console.log("places", places);
     factory.setPlaces(places);
   }, [places]);
 

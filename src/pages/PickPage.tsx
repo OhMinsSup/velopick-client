@@ -6,7 +6,7 @@ import { PickEditor } from "../components/PickEditor";
 import { PickModal } from "../components/PickModal";
 import LabelButton from "../components/ui/LabelButton";
 
-import { createMarkerFactory } from "../libs/marker/markerFactory";
+import { createMarkerFactory } from "../libs/marker/MarkerFactory";
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {

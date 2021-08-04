@@ -65,13 +65,14 @@ export class MarkerFactory {
 
   mount(): void {
     if (!this.kakaoMap) return;
+    console.log("mount => marker factory");
+
     // set event manager kakao
     kakaoMapClickManager.setKakaoMap(this.kakaoMap);
     // set marker manager kakao
     this.manager.setKakaoMap(this.kakaoMap);
 
     if (this.unsubscribeKakaoMapClick) {
-      console.log("mount => unsubscribeKakaoMapClick");
       this.unsubscribeKakaoMapClick();
     }
 
@@ -87,10 +88,10 @@ export class MarkerFactory {
   }
 
   unmount(): void {
+    console.log("unmount => marker factory");
     this.unsubscribeKakaoMapClick?.();
     this.manager.destroy();
     this.kakaoMap = null;
-    console.log("unmount");
   }
 }
 

@@ -18,7 +18,7 @@ import {
 } from "../../api/kakao/kakao.typedef";
 
 import { undrawEmpty } from "../../assets/images";
-import { createMarkerFactory } from "../../libs/marker/markerFactory";
+import { createMarkerFactory } from "../../libs/marker/MarkerFactory";
 import { useGeolocationState } from "../../atoms/geolocationState";
 
 import PlaceCardSkeleton from "../common/PlaceCardSkeleton";
