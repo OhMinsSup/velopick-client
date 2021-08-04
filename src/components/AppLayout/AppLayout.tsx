@@ -18,7 +18,7 @@ interface MainProps {
 
 function Main({ children }: MainProps) {
   return (
-    <main className="col-span-12 md:pt-2 md:col-span-9 lg:col-span-6 xl:col-span-5">
+    <main className="col-span-12 md:col-span-9 lg:col-span-6 xl:col-span-5">
       {children}
     </main>
   );

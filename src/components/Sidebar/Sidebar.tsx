@@ -80,16 +80,6 @@ function SidebarHeader() {
               <span>Member</span>
             </Link>
           </div>
-
-          <div className="md:mb-1">
-            <Link
-              to="/search"
-              css={navItemStyles(location.pathname === "/search")}
-            >
-              <BiSearch />
-              <span>Search</span>
-            </Link>
-          </div>
         </nav>
       </div>
     </div>

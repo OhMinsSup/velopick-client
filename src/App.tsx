@@ -13,6 +13,7 @@ import palette from "./libs/style/palette";
 const PickPage = loadable(() => import("./pages/PickPage"));
 const LoginPage = loadable(() => import("./pages/LoginPage"));
 const RegisterPage = loadable(() => import("./pages/RegisterPage"));
+const ExplorePage = loadable(() => import("./pages/ExplorePage"));
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
         />
       </Helmet>
       <Switch>
-        <Route path={["/", "/explore", "/member", "/search"]} exact>
+        <Route path={["/", "/explore", "/member"]} exact>
           <AppLayout>
             <AppLayout.Side>
               <Sidebar />
@@ -39,10 +40,7 @@ function App() {
                   <div>member</div>
                 </Route>
                 <Route path="/explore">
-                  <div>explore</div>
-                </Route>
-                <Route path="/search">
-                  <div>search</div>
+                  <ExplorePage />
                 </Route>
               </Switch>
             </AppLayout.Main>

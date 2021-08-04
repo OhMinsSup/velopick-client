@@ -13,8 +13,6 @@ const PickMenu: React.FC<PickMenuProps> = () => {
       return <div className="">explore</div>;
     case "/member":
       return <div className="">member</div>;
-    case "/search":
-      return <div className="">search</div>;
     default:
       return <div className="">default</div>;
   }
