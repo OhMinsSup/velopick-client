@@ -14,6 +14,7 @@ const PickPage = loadable(() => import("./pages/PickPage"));
 const LoginPage = loadable(() => import("./pages/LoginPage"));
 const RegisterPage = loadable(() => import("./pages/RegisterPage"));
 const ExplorePage = loadable(() => import("./pages/ExplorePage"));
+const MemberPage = loadable(() => import("./pages/MemberPage"));
 
 function App() {
   return (
@@ -37,7 +38,7 @@ function App() {
                   <PickPage />
                 </Route>
                 <Route path="/member">
-                  <div>member</div>
+                  <MemberPage />
                 </Route>
                 <Route path="/explore">
                   <ExplorePage />
@@ -143,6 +144,50 @@ const globalStyle = css`
     &:hover {
       background: ${palette.amber50};
       color: ${palette.blueGray800};
+    }
+  }
+
+  .blog-follow-button {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    transition-duration: 150ms;
+  }
+
+  .blog-follow-button {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 0.375rem;
+    border-width: 1px;
+    --tw-bg-opacity: 1;
+    background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    line-height: 1.625;
+    --tw-text-opacity: 1;
+    color: rgba(51, 51, 51, var(--tw-text-opacity));
+  }
+
+  .blog-follow-button {
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .blog-follow-button {
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
     }
   }
 

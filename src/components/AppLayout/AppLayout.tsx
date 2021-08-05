@@ -42,7 +42,7 @@ interface AppLayoutProps {
 
 function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="container grid items-stretch grid-cols-12 gap-2 px-2 mx-auto md:gap-4 xl:grid-cols-8 2xl:px-5">
+    <div className="container grid items-stretch grid-cols-12 gap-2 md:px-2 mx-auto md:gap-4 xl:grid-cols-8 2xl:px-5">
       {children}
     </div>
   );

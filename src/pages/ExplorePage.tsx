@@ -67,6 +67,14 @@ const Card = () => {
           </p>
         </div>
       </div>
+      <div className="flex flex-row flex-wrap items-center mt-2 text-xs text-gray-600">
+        <Link to="/" className="block p-1 mr-2 rounded-lg hover:bg-gray-100">
+          JavaScript
+        </Link>
+        <Link to="/" className="block p-1 mr-2 rounded-lg hover:bg-gray-100">
+          TypeScript
+        </Link>
+      </div>
       <div className="flex flex-row items-center justify-between pt-4">
         <div className="flex flex-row items-center justify-between w-full">
           <div className="flex flex-row items-center">
@@ -80,6 +88,42 @@ const Card = () => {
               </svg>
               <span>36</span>
             </Link>
+            <div className="flex flex-row items-center mr-4">
+              <div className="flex-row items-center hidden mr-2 md:flex">
+                <Link
+                  to="/"
+                  className="w-8 h-8 border-4 rounded-full -mr-2 overflow-hidden bg-gray-200 border-white"
+                >
+                  <img
+                    data-sizes="auto"
+                    loading="lazy"
+                    src="https://cdn.hashnode.com/res/hashnode/image/upload/v1603629474967/i5t4dV_pX.jpeg?w=50&amp;h=50&amp;fit=crop&amp;crop=faces&amp;auto=compress"
+                    data-src="https://cdn.hashnode.com/res/hashnode/image/upload/v1603629474967/i5t4dV_pX.jpeg?w=50&amp;h=50&amp;fit=crop&amp;crop=faces&amp;auto=compress"
+                    data-width="50"
+                    data-height="50"
+                    alt="Yogesh Chavan"
+                    className="block w-full"
+                    sizes="24px"
+                  ></img>
+                </Link>
+                <Link
+                  to="/"
+                  className="w-8 h-8 border-4 rounded-full -mr-2 overflow-hidden bg-gray-200 border-white"
+                >
+                  <img
+                    data-sizes="auto"
+                    loading="lazy"
+                    src="https://cdn.hashnode.com/res/hashnode/image/upload/v1601811303397/FoVTz79an.png?w=50&amp;h=50&amp;fit=crop&amp;crop=faces&amp;auto=compress"
+                    data-src="https://cdn.hashnode.com/res/hashnode/image/upload/v1601811303397/FoVTz79an.png?w=50&amp;h=50&amp;fit=crop&amp;crop=faces&amp;auto=compress"
+                    data-width="50"
+                    data-height="50"
+                    alt="Suprabha Supi"
+                    className="block w-full  lazyautosizes lazyloaded"
+                    sizes="24px"
+                  />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -90,11 +134,8 @@ const Card = () => {
 const ExplorePage = () => {
   return (
     <div className="flex flex-col flex-grow-0 w-full pb-24">
-      <div className="pt-3 mb-2 bg-white border">
+      <div className="pt-3 mb-2 bg-white">
         <div className="flex flex-row flex-wrap">
-          <Card />
-          <Card />
-          <Card />
           <Card />
         </div>
       </div>

@@ -10,11 +10,9 @@ const PickMenu: React.FC<PickMenuProps> = () => {
     case "/":
       return <SubPickMenu />;
     case "/explore":
-      return <div className="">explore</div>;
     case "/member":
-      return <div className="">member</div>;
     default:
-      return <div className="">default</div>;
+      return null;
   }
 };
 
