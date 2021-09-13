@@ -53,9 +53,7 @@ export class MarkerManager {
   destroy() {
     this.map = null;
 
-    this.allMarkers.forEach((marker) => {
-      marker.destroy();
-    });
+    this.allMarkers.forEach((marker) => marker.destroy());
 
     this.allMarkers = [];
     this.allMarkerByIds = [];
@@ -69,63 +67,53 @@ export class MarkerManager {
 
   // 마커 추가
   makeMarker(latLng: kakao.maps.LatLng | null) {
-    try {
-      if (!latLng) {
-        const error = new Error();
-        error.name = "maker manager validation";
-        error.message = "latLng is null";
-        return;
-      }
-
-      const lng = latLng.getLng();
-      const lat = latLng.getLat();
-
-      const geocoder = new kakao.maps.services.Geocoder();
-      geocoder.coord2Address(lng, lat, (result, status) => {
-        return this.handleCoord2Address(result, status, { latLng });
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
+    if (!latLng) {
+      const error = new Error();
+      error.name = "maker manager validation";
+      error.message = "latLng is null";
+      return;
     }
+
+    const lng = latLng.getLng();
+    const lat = latLng.getLat();
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.coord2Address(lng, lat, (result, status) => {
+      return this.handleCoord2Address(result, status, { latLng });
+    });
   }
 
-  private handleCoord2Address = async (
+  private handleCoord2Address = (
     result: KakaoCoord2Address[],
     status: kakao.maps.services.Status,
     { latLng }: { latLng: kakao.maps.LatLng }
   ) => {
-    try {
-      if (status !== kakao.maps.services.Status.OK) {
-        const error = new Error();
-        error.name = "geocoder service validation";
-        error.message = "status is not OK";
-        throw error;
-      }
-
-      const data = head(result);
-      if (!data) {
-        const error = new Error();
-        error.name = "geocoder service validation";
-        error.message = "data is null";
-        throw error;
-      }
-
-      const {
-        address: { address_name },
-      } = data;
-
-      const places = new kakao.maps.services.Places();
-      places.keywordSearch(address_name, (result, status) => {
-        return this.handleSearch(result, status, {
-          latLng,
-          address: address_name,
-        });
-      });
-    } catch (error) {
-      console.error(error);
+    if (status !== kakao.maps.services.Status.OK) {
+      const error = new Error();
+      error.name = "geocoder service validation";
+      error.message = "status is not OK";
       throw error;
     }
+
+    const data = head(result);
+    if (!data) {
+      const error = new Error();
+      error.name = "geocoder service validation";
+      error.message = "data is null";
+      throw error;
+    }
+
+    const {
+      address: { address_name },
+    } = data;
+
+    const places = new kakao.maps.services.Places();
+    places.keywordSearch(address_name, (result, status) => {
+      return this.handleSearch(result, status, {
+        latLng,
+        address: address_name,
+      });
+    });
   };
 
   private handleSearch = (
@@ -133,59 +121,95 @@ export class MarkerManager {
     status: kakao.maps.services.Status,
     { latLng, address }: { latLng: kakao.maps.LatLng; address: string }
   ) => {
-    try {
-      const check = [
-        kakao.maps.services.Status.OK,
-        kakao.maps.services.Status.ZERO_RESULT,
-      ];
-      if (!check.includes(status)) {
-        const error = new Error();
-        error.name = "search service validation";
-        error.message = "status is not OK";
-        throw error;
-      }
-      if (!this.kakaoMap || !latLng) {
-        const error = new Error();
-        error.name = "search service validation";
-        error.message = "kakaoMap or latLng is null";
-        throw error;
-      }
-
-      const data = head(result);
-      const marker = new Marker({
-        map: this.kakaoMap,
-        placeInfo: data ?? null,
-        position: latLng,
-        address: address,
-        removeCallback: (data) => {
-          this.mappingMarker.delete(data.markerId);
-          this.allMarkers = this.allMarkers.filter(
-            (instance) => instance.markerId !== data.markerId
-          );
-          this.allMarkerByIds = this.allMarkerByIds.filter(
-            (id) => id !== data.markerId
-          );
-          console.log("remove allMarkerByIds", this.allMarkerByIds);
-        },
-      });
-      // 이미 존재하는 아이디인지 체크.
-      const validByMarkerId = this.allMarkerByIds.includes(marker.markerId);
-      if (validByMarkerId) {
-        const newMarkerId = `${nanoid(10)}${this.totalMarkerSupply}`;
-        console.log(`reduplication => places(index: ${marker.markerId})`);
-        marker.setMarkerId(newMarkerId);
-      }
-
-      // 생성한 마커를 캐시형태로 저장한다.
-      this.mappingMarker.set(marker.markerId, marker);
-      this.allMarkers.push(marker);
-      this.allMarkerByIds.push(marker.markerId);
-      this.totalMarkerSupply = this.totalMarkerSupply + 1;
-
-      console.log("add allMarkerByIds", this.allMarkerByIds);
-    } catch (error) {
-      console.error(error);
+    const check = [
+      kakao.maps.services.Status.OK,
+      kakao.maps.services.Status.ZERO_RESULT,
+    ];
+    if (!check.includes(status)) {
+      const error = new Error();
+      error.name = "search service validation";
+      error.message = "status is not OK";
       throw error;
+    }
+    if (!this.kakaoMap || !latLng) {
+      const error = new Error();
+      error.name = "search service validation";
+      error.message = "kakaoMap or latLng is null";
+      throw error;
+    }
+
+    const data = head(result);
+    const marker = new Marker({
+      map: this.kakaoMap,
+      placeInfo: data ?? null,
+      position: latLng,
+      address: address,
+      removeCallback: (data) => {
+        this.mappingMarker.delete(data.markerId);
+        this.allMarkers = this.allMarkers.filter(
+          (instance) => instance.markerId !== data.markerId
+        );
+        this.allMarkerByIds = this.allMarkerByIds.filter(
+          (id) => id !== data.markerId
+        );
+        console.log("remove allMarkerByIds", this.allMarkerByIds);
+      },
+    });
+    // 이미 존재하는 아이디인지 체크.
+    const validByMarkerId = this.allMarkerByIds.includes(marker.markerId);
+    if (validByMarkerId) {
+      const newMarkerId = `${nanoid(10)}${this.totalMarkerSupply}`;
+      console.log(`reduplication => places(index: ${marker.markerId})`);
+      marker.setMarkerId(newMarkerId);
+    }
+
+    // 생성한 마커를 캐시형태로 저장한다.
+    this.mappingMarker.set(marker.markerId, marker);
+    this.allMarkers.push(marker);
+    this.allMarkerByIds.push(marker.markerId);
+    this.totalMarkerSupply = this.totalMarkerSupply + 1;
+
+    console.log("add allMarkerByIds", this.allMarkerByIds);
+
+    const lineLine = new kakao.maps.Polyline({
+      path: [],
+    });
+    let linePath: kakao.maps.LatLng[] = [];
+    let distance = 0;
+
+    for (let i = 0; i < this.allMarkers.length; i++) {
+      if (i !== 0) {
+        linePath = [
+          this.allMarkers[i - 1].getPosition(),
+          this.allMarkers[i].getPosition(),
+        ];
+      }
+
+      lineLine.setPath(linePath);
+
+      distance = Math.round(lineLine.getLength());
+
+      const drawLine = new kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 2,
+        endArrow: true,
+        strokeColor: "#495057",
+        strokeOpacity: 1,
+        strokeStyle: "solid",
+      });
+
+      drawLine.setMap(this.kakaoMap);
+
+      if (distance > 0) {
+        const overlay = new kakao.maps.CustomOverlay({
+          content: `<div class="distance">${distance}m</div>`,
+          position: this.allMarkers[i].getPosition(),
+          yAnchor: 1,
+          xAnchor: 0.5,
+        });
+
+        overlay.setMap(this.kakaoMap);
+      }
     }
   };
 }

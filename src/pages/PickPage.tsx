@@ -21,6 +21,7 @@ const PickPage: React.FC<PickPageProps> = () => {
     setVisiblePickModal(false);
 
     const factory = createMarkerFactory();
+    console.log(factory.totalMarkers);
     setPlaces(factory.totalMarkers);
     factory.unmount();
   }, []);
