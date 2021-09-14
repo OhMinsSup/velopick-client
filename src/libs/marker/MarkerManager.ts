@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import head from "lodash/head";
 import { KakaoCoord2Address, KakaoPlaceSearchResult } from "./types";
 import { Marker } from "./Marker";
+import { Line } from "./Line";
 
 export class MarkerManager {
   // marker manager id
@@ -66,7 +67,7 @@ export class MarkerManager {
   }
 
   // 마커 추가
-  makeMarker(latLng: kakao.maps.LatLng | null) {
+  makeMarker = async (latLng: kakao.maps.LatLng | null) => {
     if (!latLng) {
       const error = new Error();
       error.name = "maker manager validation";
@@ -77,13 +78,22 @@ export class MarkerManager {
     const lng = latLng.getLng();
     const lat = latLng.getLat();
 
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.coord2Address(lng, lat, (result, status) => {
-      return this.handleCoord2Address(result, status, { latLng });
-    });
-  }
+    const promises = () => {
+      const geocoder = new kakao.maps.services.Geocoder();
+      return new Promise<any>((resolve) => {
+        geocoder.coord2Address(lng, lat, async (result, status) => {
+          const reuslt = await this.handleCoord2Address(result, status, {
+            latLng,
+          });
+          resolve(reuslt);
+        });
+      });
+    };
 
-  private handleCoord2Address = (
+    return promises();
+  };
+
+  private handleCoord2Address = async (
     result: KakaoCoord2Address[],
     status: kakao.maps.services.Status,
     { latLng }: { latLng: kakao.maps.LatLng }
@@ -107,16 +117,23 @@ export class MarkerManager {
       address: { address_name },
     } = data;
 
-    const places = new kakao.maps.services.Places();
-    places.keywordSearch(address_name, (result, status) => {
-      return this.handleSearch(result, status, {
-        latLng,
-        address: address_name,
+    const promises = () => {
+      const places = new kakao.maps.services.Places();
+      return new Promise<any>((resolve) => {
+        places.keywordSearch(address_name, async (result, status) => {
+          const reuslt = await this.handleSearch(result, status, {
+            latLng,
+            address: address_name,
+          });
+          resolve(reuslt);
+        });
       });
-    });
+    };
+
+    return promises();
   };
 
-  private handleSearch = (
+  private handleSearch = async (
     result: KakaoPlaceSearchResult[],
     status: kakao.maps.services.Status,
     { latLng, address }: { latLng: kakao.maps.LatLng; address: string }
@@ -143,6 +160,7 @@ export class MarkerManager {
       map: this.kakaoMap,
       placeInfo: data ?? null,
       position: latLng,
+      seq: this.allMarkers.length + 1,
       address: address,
       removeCallback: (data) => {
         this.mappingMarker.delete(data.markerId);
@@ -170,46 +188,8 @@ export class MarkerManager {
     this.totalMarkerSupply = this.totalMarkerSupply + 1;
 
     console.log("add allMarkerByIds", this.allMarkerByIds);
+    Line.makeLine(this.kakaoMap, this.allMarkers);
 
-    const lineLine = new kakao.maps.Polyline({
-      path: [],
-    });
-    let linePath: kakao.maps.LatLng[] = [];
-    let distance = 0;
-
-    for (let i = 0; i < this.allMarkers.length; i++) {
-      if (i !== 0) {
-        linePath = [
-          this.allMarkers[i - 1].getPosition(),
-          this.allMarkers[i].getPosition(),
-        ];
-      }
-
-      lineLine.setPath(linePath);
-
-      distance = Math.round(lineLine.getLength());
-
-      const drawLine = new kakao.maps.Polyline({
-        path: linePath,
-        strokeWeight: 2,
-        endArrow: true,
-        strokeColor: "#495057",
-        strokeOpacity: 1,
-        strokeStyle: "solid",
-      });
-
-      drawLine.setMap(this.kakaoMap);
-
-      if (distance > 0) {
-        const overlay = new kakao.maps.CustomOverlay({
-          content: `<div class="distance">${distance}m</div>`,
-          position: this.allMarkers[i].getPosition(),
-          yAnchor: 1,
-          xAnchor: 0.5,
-        });
-
-        overlay.setMap(this.kakaoMap);
-      }
-    }
+    return marker;
   };
 }

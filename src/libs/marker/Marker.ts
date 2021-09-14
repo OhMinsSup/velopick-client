@@ -14,6 +14,8 @@ export class Marker {
   private address: string;
   // 장소 정보
   private placeInfo: Pick<KakaoPlace, "name" | "category" | "category_code">;
+  // 순서
+  private seq: number;
 
   private removeCallback: (instace: Marker) => void;
 
@@ -22,12 +24,14 @@ export class Marker {
     placeInfo,
     position,
     address,
+    seq,
     removeCallback,
   }: {
     map: kakao.maps.Map;
     placeInfo: KakaoPlaceSearchResult | null;
     position: kakao.maps.LatLng;
     address: string;
+    seq: number;
     removeCallback: (instace: Marker) => void;
   }) {
     this.id = nanoid(10);
@@ -41,6 +45,7 @@ export class Marker {
     this.marker.setTitle(placeInfo?.place_name ?? address);
     this.position = position;
     this.address = address;
+    this.seq = seq;
     this.placeInfo = {
       name: placeInfo?.place_name ?? null,
       category: placeInfo?.category_group_name ?? null,
@@ -61,6 +66,10 @@ export class Marker {
 
   getAddress() {
     return this.address;
+  }
+
+  getSeq() {
+    return this.seq;
   }
 
   getPlaceInfo() {
@@ -121,6 +130,7 @@ export class Marker {
       id: this.id,
       ...this.placeInfo,
       address_name: this.address,
+      seq: this.seq,
       x: this.position.getLng().toString(),
       y: this.position.getLat().toString(),
     };

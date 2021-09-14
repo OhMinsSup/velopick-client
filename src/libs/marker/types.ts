@@ -48,6 +48,7 @@ export interface KakaoPlace {
   name: string | null;
   category: string | null;
   category_code: string | null;
+  seq: number;
   address_name: string;
   x: string;
   y: string;

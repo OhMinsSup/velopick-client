@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { kakaoMapClickManager } from "./kakaoMapClickManager";
+import { Line } from "./Line";
 import { MarkerManager } from "./MarkerManager";
 import { KakaoPlace } from "./types";
 
@@ -55,12 +56,19 @@ export class MarkerFactory {
   }
 
   // 장소 리스트 정보를 현재 등록된 kakao map에 반영한다.
-  setPlaces(places: KakaoPlace[]): void {
+  async setPlaces(places: KakaoPlace[]) {
+    const fns: (() => Promise<void>)[] = [];
     for (const place of places) {
       const { x, y } = place;
       const latLng = this.generateLatLng(y, x);
-      this.applyMarker(latLng);
+      const fn = () => this.manager.makeMarker(latLng);
+      fns.push(fn);
     }
+
+    await Promise.all(fns.map((fn) => fn()));
+
+    console.log("setPlaces => success", this.manager.markers);
+    Line.makeLine(this.kakaoMap!, this.manager.markers);
   }
 
   mount(): void {
