@@ -57,18 +57,21 @@ export class MarkerFactory {
 
   // 장소 리스트 정보를 현재 등록된 kakao map에 반영한다.
   async setPlaces(places: KakaoPlace[]) {
-    const fns: (() => Promise<void>)[] = [];
+    const allMakers: any[] = [];
     for (const place of places) {
       const { x, y } = place;
       const latLng = this.generateLatLng(y, x);
-      const fn = () => this.manager.makeMarker(latLng);
-      fns.push(fn);
+      const marker = this.manager.makeMaker({
+        place,
+        latLng,
+      });
+      allMakers.push(marker);
     }
 
-    await Promise.all(fns.map((fn) => fn()));
+    // await Promise.all(fns.map((fn) => fn()));
 
-    console.log("setPlaces => success", this.manager.markers);
-    Line.makeLine(this.kakaoMap!, this.manager.markers);
+    console.log("setPlaces => success", allMakers);
+    Line.makeLine(this.kakaoMap!, allMakers);
   }
 
   mount(): void {
@@ -86,13 +89,13 @@ export class MarkerFactory {
 
     this.unsubscribeKakaoMapClick = kakaoMapClickManager.subscribe((event) => {
       console.count("event => call");
-      this.manager.makeMarker(event.latLng);
+      this.manager.registerMarker(event.latLng);
     });
   }
 
   applyMarker(latLng: kakao.maps.LatLng | null) {
     console.log("applyMarker => latLng", latLng);
-    this.manager.makeMarker(latLng);
+    this.manager.registerMarker(latLng);
   }
 
   unmount(): void {
