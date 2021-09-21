@@ -9,7 +9,6 @@ import { usePlacesValue } from "../../atoms/placeState";
 interface SubPickMenuProps {}
 const SubPickMenu: React.FC<SubPickMenuProps> = () => {
   const places = usePlacesValue();
-
   return (
     <>
       <TagContainer label="태그" placeholder="태그를 입력해주세요." />

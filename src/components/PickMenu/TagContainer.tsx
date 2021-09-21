@@ -38,7 +38,7 @@ const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
         setKeyword("");
       }
     },
-    [tags, keyword]
+    [tags, keyword],
   );
 
   const onRemove = (tag: string) => removeTag(tag);
@@ -72,28 +72,32 @@ const TagContainer: React.FC<TagContainerProps> = ({ label, placeholder }) => {
               onChange={onChange}
               onKeyPress={onKeyPress}
             />
-            {data && data.length ? (
-              <div className="absolute right-0 z-10 w-full h-auto overflow-hidden bg-white border rounded-lg shadow-lg top-100">
-                {data.map((tag) => (
-                  <DropdownTagItem
-                    type="TAG"
-                    key={tag.id}
-                    tag={tag}
-                    onClose={onClose}
-                  />
-                ))}
-              </div>
-            ) : null}
+            {data && data.length
+              ? (
+                <div
+                  className="absolute right-0 z-10 w-full h-auto overflow-hidden bg-white border rounded-lg shadow-lg top-100"
+                >
+                  {data.map((tag) => (
+                    <DropdownTagItem
+                      type="TAG"
+                      key={tag.id}
+                      tag={tag}
+                      onClose={onClose}
+                    />
+                  ))}
+                </div>
+              )
+              : null}
           </div>
           <div className="flex flex-row flex-wrap">
             {tags.length
               ? tags.map((tag, i) => (
-                  <TagItem
-                    key={`${tag}-${i}`}
-                    name={tag}
-                    onRemove={() => onRemove(tag)}
-                  />
-                ))
+                <TagItem
+                  key={`${tag}-${i}`}
+                  name={tag}
+                  onRemove={() => onRemove(tag)}
+                />
+              ))
               : null}
           </div>
         </div>
