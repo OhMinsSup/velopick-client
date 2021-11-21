@@ -1,20 +1,12 @@
 import React from "react";
-import loadable from "@loadable/component";
 import { Global, css } from "@emotion/react";
 import { Helmet } from "react-helmet-async";
-import { Route, Switch } from "react-router";
 
 import { AppLayout } from "./components/AppLayout";
-import { Sidebar } from "./components/Sidebar";
-import { PickMenu } from "./components/PickMenu";
 
 import palette from "./libs/style/palette";
 
-const PickPage = loadable(() => import("./pages/PickPage"));
-const LoginPage = loadable(() => import("./pages/LoginPage"));
-const RegisterPage = loadable(() => import("./pages/RegisterPage"));
-const ExplorePage = loadable(() => import("./pages/ExplorePage"));
-const MemberPage = loadable(() => import("./pages/MemberPage"));
+import PickPage from "./pages/PickPage";
 
 function App() {
   return (
@@ -26,33 +18,12 @@ function App() {
           content="나의 기억을 Pick! 너의 기억을 Pick!"
         />
       </Helmet>
-      <Switch>
-        <Route path={["/", "/explore", "/member"]} exact>
-          <AppLayout>
-            <AppLayout.Side>
-              <Sidebar />
-            </AppLayout.Side>
-            <AppLayout.Main>
-              <Switch>
-                <Route path="/" exact>
-                  <PickPage />
-                </Route>
-                <Route path="/member">
-                  <MemberPage />
-                </Route>
-                <Route path="/explore">
-                  <ExplorePage />
-                </Route>
-              </Switch>
-            </AppLayout.Main>
-            <AppLayout.RightSide>
-              <PickMenu />
-            </AppLayout.RightSide>
-          </AppLayout>
-        </Route>
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
-      </Switch>
+      <AppLayout>
+        <AppLayout.Main>
+          <PickPage />
+        </AppLayout.Main>
+      </AppLayout>
+
       <Global styles={globalStyle} />
     </>
   );

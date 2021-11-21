@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import { HelmetProvider } from "react-helmet-async";
 import { ToastProvider } from "react-toast-notifications";
@@ -18,11 +17,9 @@ ReactDOM.render(
     <HelmetProvider>
       <RecoilRoot>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <ToastProvider>
-              <App />
-            </ToastProvider>
-          </BrowserRouter>
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </QueryClientProvider>
       </RecoilRoot>
     </HelmetProvider>

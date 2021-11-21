@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { BiLocationPlus } from "react-icons/bi";
 import { usePlacesState } from "../atoms/placeState";
+import PlaceMenuItem from "../components/ui/PlaceMenuItem";
 
-import { PickEditor } from "../components/PickEditor";
 import { PickModal } from "../components/PickModal";
 import LabelButton from "../components/ui/LabelButton";
 
@@ -10,7 +10,7 @@ import { createMarkerFactory } from "../libs/marker/MarkerFactory";
 
 interface PickPageProps {}
 const PickPage: React.FC<PickPageProps> = () => {
-  const [, setPlaces] = usePlacesState();
+  const [places, setPlaces] = usePlacesState();
   const [visiblePickModal, setVisiblePickModal] = useState<boolean>(false);
 
   const onShowPickModal = useCallback(() => {
@@ -21,7 +21,6 @@ const PickPage: React.FC<PickPageProps> = () => {
     setVisiblePickModal(false);
 
     const factory = createMarkerFactory();
-    console.log(factory.totalMarkers);
     setPlaces(factory.totalMarkers);
     factory.unmount();
   }, []);
@@ -39,7 +38,9 @@ const PickPage: React.FC<PickPageProps> = () => {
             />
           </div>
         </div>
-        <PickEditor />
+        {places.map((place) => (
+          <PlaceMenuItem key={place.id} place={place} />
+        ))}
       </div>
       <PickModal visible={visiblePickModal} onClose={onClosePickModal} />
     </>
